@@ -17,7 +17,7 @@ jobs:
       - name: Build
         run: |
           sudo ./build/fetch-and-build.sh ${{ matrix.package }}
-          zip ./autofeed.img
+          zip autofeed.img.zip autofeed.img
 
       - name: Create Release
         id: create_release
