@@ -6,8 +6,8 @@ ARCH=${PACKAGE[1]}
 
 USER=$(whoami)
 if [[ ${USER} != "root" ]]; then
+  echo "User: ${USER}"
   echo "Please run as root."
-  exit 1
 fi
 
 echo "Fetching base image..."
