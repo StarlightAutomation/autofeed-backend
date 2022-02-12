@@ -22,7 +22,7 @@ RUN mkdir /etc/autofeed/py-scripts
 WORKDIR /tmp/autofeed
 ADD . /tmp/autofeed
 
-COPY ./scripts/** /etc/autofeed/py-scripts
+COPY ./scripts/** /etc/autofeed/py-scripts/
 
 # Build Server
 RUN cd server && yarn install && yarn build && \
