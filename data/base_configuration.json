@@ -1,0 +1,61 @@
+{
+  "gpio": [
+    {
+      "id": "VALVE_MAIN",
+      "name": "Main Valve",
+      "pin": 23
+    },
+    {
+      "id": "PUMP_STIR",
+      "name": "Stir Pump",
+      "pin": 24
+    },
+    {
+      "id": "PUMP_EGRESS",
+      "name": "Egress Pump",
+      "pin": 25
+    },
+    {
+      "id": "PUMP_AIR",
+      "name": "Aeration Pump",
+      "pin": 27
+    }
+  ],
+  "paths": {
+    "scripts": {
+      "python": "/etc/autofeed/py-scripts"
+    },
+    "application": "/etc/autofeed/app"
+  },
+  "schedules": [
+    {
+      "id": "monday",
+      "day": "Monday",
+      "start": "16:51:00",
+      "end": "16:52:38",
+      "enabled": true,
+      "states": [
+        {
+          "id": "VALVE_MAIN",
+          "state": "on"
+        },
+        {
+          "id": "PUMP_EGRESS",
+          "state": "on"
+        }
+      ]
+    },
+    {
+      "id": "tuesday",
+      "copy": "monday",
+      "day": "Tuesday",
+      "enabled": true
+    },
+    {
+      "id": "wednesday",
+      "day": "Wednesday",
+      "copy": "monday",
+      "enabled": true
+    }
+  ]
+}

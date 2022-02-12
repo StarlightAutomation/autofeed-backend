@@ -1,0 +1,13 @@
+server/node_modules
+client/node_modules
+server/build
+client/.nuxt
+client/dist
+autofeed.img
+raspbian-bullseye64.img
+raspbian.img
+custom.img
+custom-root.tar
+.git
+pt.txt
+.github

@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dropdown-button {
+  @apply bg-white;
+  @apply relative;
+  @apply w-full;
+  @apply border;
+  @apply border-gray-300;
+  @apply rounded-md;
+  @apply shadow-sm;
+  @apply pl-3;
+  @apply pr-10;
+  @apply py-2;
+  @apply text-left;
+  @apply cursor-default;
+  @apply focus:outline-none;
+  @apply focus:ring-1;
+  @apply focus:ring-indigo-500;
+  @apply focus:border-indigo-500;
+  @apply sm:text-sm;
+  @apply dark:bg-gray-700;
+  @apply dark:border-gray-800;
+}
+
+.dropdown-container {
+  @apply absolute;
+  @apply z-10;
+  @apply mt-1;
+  @apply w-full;
+  @apply bg-white;
+  @apply shadow-lg;
+  @apply max-h-60;
+  @apply rounded-md;
+  @apply py-1;
+  @apply text-base;
+  @apply ring-1;
+  @apply ring-black;
+  @apply ring-opacity-5;
+  @apply overflow-auto;
+  @apply focus:outline-none;
+  @apply sm:text-sm;
+  @apply dark:bg-gray-700;
+}
+
+.dropdown-container li {
+  @apply text-gray-900;
+  @apply select-none;
+  @apply relative;
+  @apply py-2;
+  @apply pl-3;
+  @apply pr-9;
+  @apply cursor-pointer;
+  @apply hover:bg-gray-100;
+  @apply dark:text-gray-300;
+  @apply dark:hover:bg-gray-800;
+}
+
+.text-input {
+  @apply shadow-sm;
+  @apply focus:ring-indigo-500;
+  @apply focus:border-indigo-500;
+  @apply block;
+  @apply w-full;
+  @apply sm:text-sm;
+  @apply border-gray-300;
+  @apply rounded-md;
+  @apply dark:focus:ring-cool-gray-500;
+  @apply dark:focus:border-cool-gray-500;
+  @apply dark:bg-gray-700;
+  @apply dark:border-cool-gray-800;
+}
