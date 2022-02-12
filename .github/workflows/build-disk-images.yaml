@@ -16,7 +16,7 @@ jobs:
 
       - name: Build
         run: |
-          ./build/fetch-and-build.sh ${{ matrix.package }}
+          sudo ./build/fetch-and-build.sh ${{ matrix.package }}
           zip ./autofeed.img
 
       - name: Create Release
