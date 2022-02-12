@@ -4,8 +4,26 @@ on:
     tags: ['*.*.*']
 
 jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
   build:
     name: Build
+    needs: create-release
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -19,24 +37,13 @@ jobs:
           sudo ./build/fetch-and-build.sh ${{ matrix.package }}
           zip autofeed.img.zip autofeed.img
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
       - name: Upload Assets
         id: upload_assets
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
           asset_path: ./autofeed.img.zip
           asset_name: autofeed-${{ github.ref }}-${{ matrix.package }}.img.zip
           asset_content_type: application/zip
