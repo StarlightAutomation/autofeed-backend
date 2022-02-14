@@ -32,14 +32,14 @@ ADD . /tmp/autofeed
 COPY ./scripts/** /etc/autofeed/py-scripts/
 
 # Build Server
-RUN cd server && yarn install && yarn build && \
+RUN cd server && yarn install --network-timeout 100000 && yarn build && \
     mv build /etc/autofeed/app && \
     mv node_modules /etc/autofeed/app && \
     mv package.json /etc/autofeed/app && \
     cd -
 
 # Build Client
-RUN cd client && yarn install && yarn build && \
+RUN cd client && yarn install --network-timeout 100000 && yarn build && \
     mv * /etc/autofeed/client && \
     mv .nuxt /etc/autofeed/client && \
     cd -
