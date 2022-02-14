@@ -20,4 +20,4 @@ if [ ${EXIT} == 1 ]; then
 fi
 
 echo "Fetched base image: ${BASE_IMAGE}"
-. ./build/build.new.sh
+. ./build/build.sh

@@ -8,6 +8,12 @@ raspbian-bullseye64.img
 raspbian.img
 custom.img
 custom-root.tar
+boot.tar
 .git
 pt.txt
 .github
+client/.env
+server/.env
+raspbian-bullseye-64.img
+raspbian-bullseye-32.img
+raspbian-buster-32.img

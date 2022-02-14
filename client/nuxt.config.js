@@ -1,7 +1,7 @@
 export default {
-  mode: 'spa',
-  ssr: false,
-  target: 'static',
+  mode: 'universal',
+  ssr: true,
+  target: 'server',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'DIYAutoFeed',
@@ -15,7 +15,6 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
     ],
     script: [
     ],
@@ -37,6 +36,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/tailwindcss',
+    'nuxt-purgecss',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -84,5 +84,8 @@ export default {
 
   publicRuntimeConfig: {
     API_URL: process.env.API_URL || 'http://localhost',
+  },
+  purgeCSS: {
+    whitelistPatterns: [/(^|\.)fa-/, /-fa($|\.)/],
   },
 }

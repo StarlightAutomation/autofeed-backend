@@ -3,85 +3,43 @@
 set -e
 set -x
 
-BASE_IMAGE="raspbian.img"
-IMAGE_NAME="autofeed.img"
-PARTITION_TABLE="pt.txt"
-IMAGE_SIZE=4096
-MNT_DIR=/mnt/autofeed
+# Default Variables
+if [ -z ${BASE_IMAGE} ]; then
+  BASE_IMAGE="raspbian.img"
+fi
+if [ -z ${IMAGE_NAME} ]; then
+  IMAGE_NAME="autofeed.img"
+fi
+if [ -z ${PARTITION_TABLE} ]; then
+  PARTITION_TABLE="pt.txt"
+fi
+if [ -z ${IMAGE_SIZE} ]; then
+  IMAGE_SIZE=4096
+fi
 
-mkdir -p /mnt/autofeed
+MNT_DIR=/mnt/autofeed
+mkdir -p ${MNT_DIR}
+
+echo ${PARTITION_TABLE}
 
 echo "Installing Prerequisites"
 apt install -y qemu-user-static
 
 # EXTRACT PARTITIONS
 echo "Extracting Partitions"
-
-sfdisk -d ${BASE_IMAGE} > ${PARTITION_TABLE}
-losetup -a | grep "${BASE_IMAGE}" | awk -F: '{ print $1 }' | xargs -r losetup -d
-losetup -fP ${BASE_IMAGE}
-
-DEV=$(losetup -a | grep "${BASE_IMAGE}" | awk -F: '{ print $1 }')
-
-# Extract Boot Partition
-mount ${DEV}p1 $MNT_DIR
-tar cf boot.tar -C $MNT_DIR --numeric-owner .
-chown $(whoami) boot.tar
-umount $MNT_DIR
-
-# Extract Root Partition
-mount ${DEV}p2 $MNT_DIR
-tar cf root.tar -C $MNT_DIR --numeric-owner .
-chown $(whoami) root.tar
-umount $MNT_DIR
-
-losetup -d ${DEV}
+. ./build/scripts/0-extract-partitions.sh
 
 # BUILD DOCKER IMAGE
 echo "Building Docker Image"
-docker build -t diyautofeed:latest -f build/Dockerfile .
+. ./build/scripts/1-build-docker.sh
 
-# BUILD PI IMAGE
-echo "Building Raspberry Pi Image"
-losetup -a | grep "${IMAGE_NAME}" | awk -F: '{ print $1 }' | xargs -r losetup -d
-dd if=/dev/zero of=./${IMAGE_NAME} bs=1M count=${IMAGE_SIZE}
-sfdisk ${IMAGE_NAME} < ${PARTITION_TABLE}
-losetup -fP ${IMAGE_NAME}
-DEV=$(losetup -a | grep "${IMAGE_NAME}" | awk -F: '{ print $1 }')
+# INIT PI IMAGE
+echo "Initializing Raspberry Pi Disk Image"
+. ./build/scripts/2-init-pi-image.sh
 
-CONTAINER=$(docker run -d --rm diyautofeed:latest sleep 60)
-docker export ${CONTAINER} > custom-root.tar
+# PI IMAGE PARTITIONS
+echo "Building Disk Image Partitions"
+. ./build/scripts/3-pi-partitions.sh
 
-mkfs.fat ${DEV}p1
-mount ${DEV}p1 $MNT_DIR
-tar xf boot.tar -C $MNT_DIR --numeric-owner
-umount $MNT_DIR
-
-# Create then resize root partition for new data
-mkfs.ext4 ${DEV}p2
-parted ${DEV} resizepart 2 ${IMAGE_SIZE}M
-e2fsck -f ${DEV}p2 -y
-resize2fs ${DEV}p2
-
-# The disk ID changes after repartitioning. This must then be updated in both boot and root partitions
-DISKID=$(blkid ${IMAGE_NAME} | grep -o -P '(?<=PTUUID=").*(?=" PTTYPE)')
-
-# Replace old disk ID to root partition in boot/cmdline.txt
-mount ${DEV}p1 ${MNT_DIR}
-cp ./data/cmdline.txt ./data/cmdline.txt.tmp
-sed -i "s/<DISK-ID>/${DISKID}/g" ./data/cmdline.txt.tmp
-rm -f ${MNT_DIR}/cmdline.txt
-cp --no-preserve=mode,ownership ./data/cmdline.txt.tmp ${MNT_DIR}/cmdline.txt
-rm -f ./data/cmdline.txt.tmp
-umount ${MNT_DIR}
-
-mount ${DEV}p2 ${MNT_DIR}
-tar xf custom-root.tar -C ${MNT_DIR} --numeric-owner
-
-# Replace old disk IDs in root partition fstab
-cp ./data/fstab ./data/fstab.tmp
-sed -i "s/<DISK-ID>/${DISKID}/g" ./data/fstab.tmp
-mv ./data/fstab.tmp ${MNT_DIR}/etc/fstab
-umount ${MNT_DIR}
-
-losetup -d ${DEV}
+. ./build/scripts/4-build-cleanup.sh
+echo "Build complete: ${IMAGE_NAME}"

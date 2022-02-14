@@ -18,7 +18,26 @@ export const actions = {
         resolve(res.data);
       }).catch(reject);
     });
-  }
+  },
+  saveSchedules ({ commit, getters }, modifiedSchedule) {
+    return new Promise((resolve, reject) => {
+      const existingSchedules = getters.schedules || [];
+      for (const i in existingSchedules) {
+        const schedule = existingSchedules[i];
+        if (schedule.id === modifiedSchedule.id) {
+          existingSchedules[i] = modifiedSchedule;
+          break;
+        }
+      }
+
+      axios.put('/api/schedules', {
+        schedules: existingSchedules,
+      }).then((res) => {
+        commit('SET_CONFIG', res.data);
+        resolve(res.data);
+      }).catch(reject);
+    });
+  },
 };
 
 export const mutations = {

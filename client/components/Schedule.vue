@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <div class="border border-dashed border-blue-500 p-3">
-      <h1 class="text-lg border-b border-blue-300 pb-1 mb-2">{{ schedule.day }}</h1>
+      <h1 class="text-lg border-b border-blue-300 pb-1 mb-2">{{ formattedDay }}</h1>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div class="mt-3">
@@ -11,8 +11,8 @@
             </div>
             <div class="mb-3">
               <b>Enabled:</b>
-              <font-awesome-icon :icon="['fas', 'check-circle']" class="text-green-500 ml-3" v-if="schedule.enabled" />
-              <font-awesome-icon :icon="['fas', 'times-circle']" class="text-red-500 ml-3" v-if="!schedule.enabled" />
+              <font-awesome-icon :icon="['fas', 'check-circle']" class="text-green-500 ml-3 w-4 h-4 inline" v-if="schedule.enabled" />
+              <font-awesome-icon :icon="['fas', 'times-circle']" class="text-red-500 ml-3 w-4 h-4 inline" v-if="!schedule.enabled" />
             </div>
             <div>
               <span class="font-medium">Start Time:</span>
@@ -94,6 +94,7 @@
           <div class="w-full">
             <button
               class="w-full rounded bg-blue-600 border border-blue-700 px-3 py-1.5 text-gray-100 hover:bg-blue-500"
+              @click="save()"
             >Save Schedule</button>
           </div>
         </div>
@@ -127,6 +128,11 @@ export default {
         states: [],
       },
     };
+  },
+  computed: {
+    formattedDay () {
+      return this.day.charAt(0).toUpperCase() + this.day.slice(1);
+    },
   },
   methods: {
     getGpioName (id) {
@@ -170,11 +176,9 @@ export default {
         }
       }
     },
-
     setModifiedScheduleOnMount () {
-      console.log(this.schedule);
       if (this.schedule.id) {
-        this.modifiedSchedule = { ...this.schedule };
+        this.modifiedSchedule = { ...this.schedule, states: [...this.schedule.states] };
         return;
       }
 
@@ -182,7 +186,10 @@ export default {
         enabled: true,
         states: [],
       };
-    }
+    },
+    save () {
+      this.$emit('saved', this.modifiedSchedule);
+    },
   },
   mounted () {
     this.setModifiedScheduleOnMount();

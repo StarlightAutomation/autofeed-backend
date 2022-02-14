@@ -16,7 +16,7 @@ export default class ScriptCaller
 
             const expectedSetting = (setting) ? 'HIGH' : 'LOW';
             exec(
-                util.format('python3 %s/gpio_hl.py %d %d', Config.instance.getConfig().paths.scripts.python, gpioConfig.pin, Number(setting)),
+                util.format('python3 %s/gpio_hl.py %d %d', process.env.SCRIPTS_DIR, gpioConfig.pin, Number(setting)),
                 (error: ExecException | null, stdout: string) => {
                     if (error) {
                         reject(error);
@@ -43,7 +43,7 @@ export default class ScriptCaller
             }
 
             exec(
-                util.format('python3 %s/gpio_status.py %d', Config.instance.getConfig().paths.scripts.python, gpioConfig.pin),
+                util.format('python3 %s/gpio_status.py %d', process.env.SCRIPTS_DIR, gpioConfig.pin),
                 (error: ExecException | null, stdout: string) => {
                     if (error) {
                         reject(error);

@@ -4,6 +4,10 @@ ARCH=$2
 RELEASE=$1
 
 FILENAME=raspbian-${RELEASE}-${ARCH}.img
+if [ -f ${FILENAME} ]; then
+  echo ${FILENAME}
+  exit 0
+fi
 
 if [[ ${RELEASE} == "bullseye" ]]; then
   if [ ${ARCH} == "32" ]; then

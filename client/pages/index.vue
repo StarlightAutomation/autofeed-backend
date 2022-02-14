@@ -10,19 +10,35 @@
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
         <div>
           Egress Pump:
-          <font-awesome-icon :icon="['fas', 'times-circle']" class="text-red-500 ml-3" />
+          <div class="inline-block">
+            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.egress.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.egress.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.egress.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+          </div>
         </div>
         <div>
           Stir Pump:
-          <font-awesome-icon :icon="['fas', 'check-circle']" class="text-green-500 ml-3" />
+          <div class="inline-block">
+            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.stirPump.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.stirPump.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.stirPump.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+          </div>
         </div>
         <div>
           Main Valve:
-          <font-awesome-icon :icon="['fas', 'times-circle']" class="text-red-500 ml-3" />
+          <div class="inline-block">
+            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.mainValve.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.mainValve.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.mainValve.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+          </div>
         </div>
         <div>
           Aeration Pump:
-          <font-awesome-icon :icon="['fas', 'check-circle']" class="text-green-500 ml-3" />
+          <div class="inline-block">
+            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.aeration.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.aeration.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.aeration.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+          </div>
         </div>
       </div>
     </div>
@@ -42,6 +58,8 @@
         :schedule="selectedSchedule"
         :gpio="gpio"
         :day="selectedDay"
+        :key="selectedDay"
+        @saved="saveModifiedSchedule"
       />
     </div>
   </div>
@@ -55,6 +73,24 @@ export default {
   components: {Schedule},
   data () {
     return {
+      deviceStatus: {
+        egress: {
+          status: undefined,
+          id: 'PUMP_EGRESS',
+        },
+        stirPump: {
+          status: undefined,
+          id: 'PUMP_STIR',
+        },
+        mainValve: {
+          status: undefined,
+          id: 'VALVE_MAIN',
+        },
+        aeration: {
+          status: undefined,
+          id: 'PUMP_AIR',
+        },
+      },
       currentTimeInterval: undefined,
       currentTime: moment().format('dddd MMM Do - hh:mm:ss A z'),
       selectedDay: moment().format('dddd').toLowerCase(),
@@ -93,7 +129,11 @@ export default {
   computed: {
     selectedSchedule () {
       const filtered = this.$store.getters['api/schedules'].filter((schedule) => schedule.id === this.selectedDay);
-      const schedule = filtered[0] || {};
+      const schedule = filtered[0] || {
+        start: undefined,
+        end: undefined,
+        enabled: true,
+      };
 
       if (schedule.copy) {
         return { ...(this.$store.getters['api/schedules'].filter((copied) => copied.id === schedule.copy)[0]) || {}, ...schedule };
@@ -130,9 +170,25 @@ export default {
       }
 
       return style.join(' ');
-    }
+    },
+    saveModifiedSchedule (schedule) {
+      this.$store.dispatch('api/saveSchedules', schedule).then(() => {
+        //
+      });
+    },
+    getDeviceStatuses () {
+      for (const i in this.deviceStatus) {
+        const device = this.deviceStatus[i];
+        this.$axios.get('/api/device-status/' + device.id).then((res) => {
+          this.deviceStatus[i].status = res.data.status;
+        }).catch((error) => {
+          console.error(error);
+        });
+      }
+    },
   },
   mounted () {
+    this.getDeviceStatuses();
     this.selectedDay = moment().format('dddd').toLowerCase();
     this.currentTimeInterval = setInterval(() => {
       this.currentTime = moment().format('dddd MMM Do - hh:mm:ss A z')

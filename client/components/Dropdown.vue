@@ -12,7 +12,7 @@
         {{ selected.name || '&nbsp;' }}
       </span>
       <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-        <font-awesome-icon :icon="['fas', 'sort']" class="text-gray-300 dark:text-gray-400" />
+        <font-awesome-icon :icon="['fas', 'sort']" class="text-gray-300 dark:text-gray-400 w-4 h-4 inline" />
       </span>
     </button>
 
@@ -34,7 +34,7 @@
           {{ option.name }}
         </span>
         <span v-if="option.id === selectedOption" class="text-indigo-600 absolute inset-y-0 right-0 flex items-center pr-4 dark:text-gray-300">
-          <font-awesome-icon :icon="['fas', 'check']" />
+          <font-awesome-icon :icon="['fas', 'check']" class="w-4 h-4 inline" />
         </span>
       </li>
     </ul>

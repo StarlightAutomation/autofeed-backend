@@ -1,14 +1,21 @@
 require('module-alias/register');
+require('dotenv').config();
 import HttpService from "@services/http";
 import Scheduler from "@services/scheduler";
 import {loadControllers} from "@app/utils";
 import Config from "@services/config";
 import util from "util";
+import path from "path";
 
 const {version} = require("../package.json");
-const baseConfig = require("/etc/autofeed/data/base_configuration.json");
-
 process.env.VERSION = version;
+
+process.env.DATA_DIR = (process.env.DATA_DIR) ? path.resolve(process.env.DATA_DIR) : '/etc/autofeed/data';
+process.env.APP_DIR = (process.env.APP_DIR) ? path.resolve(process.env.APP_DIR) : '/etc/autofeed/app';
+process.env.CLIENT_DIR = (process.env.CLIENT_DIR) ? path.resolve(process.env.CLIENT_DIR) : '/etc/autofeed/client';
+process.env.SCRIPTS_DIR = (process.env.SCRIPTS_DIR) ? path.resolve(process.env.SCRIPTS_DIR) : '/etc/autofeed/py-scripts';
+
+const baseConfig = require(util.format('%s/base_configuration.json', process.env.DATA_DIR));
 
 console.log('Starting Application');
 console.log(util.format('DIYAutoFeed v%s', version));

@@ -2,6 +2,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
   purge: {
+    enabled: false,
     content: [
       `components/**/*.{vue,js}`,
       `layouts/**/*.vue`,
@@ -9,6 +10,12 @@ module.exports = {
       `plugins/**/*.{js,ts}`,
       `nuxt.config.{js,ts}`,
     ],
+    options: {
+      safelist: [
+        /-fa$/,
+        /^fa-/
+      ],
+    },
   },
   darkMode: 'class', // or 'media' or 'class'
   mode: 'jit',

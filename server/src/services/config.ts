@@ -1,4 +1,5 @@
 import {ISchedule} from "@services/scheduler";
+import util from "util";
 const fs = require("fs");
 
 export interface IGPIOConfig
@@ -58,6 +59,6 @@ export default class Config
     public async updateSchedules (schedules: Array<ISchedule>): Promise<void>
     {
         this.config.schedules = schedules;
-        await fs.writeFileSync('/etc/autofeed/data/base_configuration.json', JSON.stringify(this.config));
+        await fs.writeFileSync(util.format('%s/base_configuration.json', process.env.DATA_DIR), JSON.stringify(this.config));
     }
 }
