@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+  autofeed-server:
+    container_name: autofeed-server
+    image: node:16
+    volumes:
+      - './data:/etc/autofeed/data'
+      - './scripts:/etc/autofeed/scripts'
+      - './server:/usr/src/app'
+      - server-node-modules:/usr/src/app/node_modules
+    environment:
+      DATA_DIR: /etc/autofeed/data
+      APP_DIR: /usr/src/app
+      SCRIPTS_DIR: /etc/autofeed/scripts
+    working_dir: /usr/src/app
+    command: 'yarn start'
+    ports:
+      - '8080:8080'
+
+  autofeed-client:
+    container_name: autofeed-client
+    image: node:16
+    depends_on:
+      - autofeed-server
+    volumes:
+      - './client:/usr/src/app'
+      - client-node-modules:/usr/src/app/node_modules
+    environment:
+      API_URL: http://autofeed-server:8080
+      NUXT_HOST: 0.0.0.0
+    working_dir: /usr/src/app
+    command: 'yarn dev'
+    ports:
+      - '3000:3000'
+
+volumes:
+  server-node-modules:
+  client-node-modules:
