@@ -7,6 +7,7 @@ export interface IGPIOConfig
     id: string;
     name: string;
     pin: number;
+    normal: 'on'|'off';
 }
 
 export interface IConfig
