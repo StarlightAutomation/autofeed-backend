@@ -23,6 +23,7 @@ mkdir -p ${MNT_DIR}
 echo ${PARTITION_TABLE}
 
 echo "Installing Prerequisites"
+apt update -y
 apt install -y qemu-user-static
 
 # EXTRACT PARTITIONS
