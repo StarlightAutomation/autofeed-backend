@@ -123,11 +123,11 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Build
-        env:
-          SERVER_IMAGE: ghcr.io/starlightautomation/autofeed-server:${{ steps.version.outputs.VERSION }}
-          CLIENT_IMAGE: ghcr.io/starlightautomation/autofeed-client:${{ steps.version.outputs.VERSION }}
         run: |
-          sudo ./build/os/fetch-and-build.sh ${{ matrix.package }}
+          sudo SERVER_IMAGE=ghcr.io/starlightautomation/autofeed-server:${{ steps.version.outputs.VERSION }} \
+               CLIENT_IMAGE=ghcr.io/starlightautomation/autofeed-client:${{ steps.version.outputs.VERSION }} \
+               ./build/os/fetch-and-build.sh ${{ matrix.package }}
+
           zip autofeed.img.zip autofeed.img
 
       - name: Upload Assets
