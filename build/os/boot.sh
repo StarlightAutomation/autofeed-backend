@@ -27,6 +27,7 @@ if [ ! "$(docker ps -a | grep autofeed-server)" ]; then
   echo "Initializing Server"
   docker run \
       --name autofeed-server \
+      --hostname autofeed-server \
       --restart always \
       -p 8080:8080 \
       --mount type=bind,src=/etc/autofeed/data,dst=/etc/autofeed/data \
@@ -37,6 +38,8 @@ if [ ! "$(docker ps -a | grep autofeed-client)" ]; then
   echo "Initializing Client"
   docker run \
       --name autofeed-client \
+      --hostname autofeed-client \
+      --link autofeed-server \
       --restart always \
       -p 3000:3000 \
       -d autofeed-client yarn start
