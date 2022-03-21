@@ -40,7 +40,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64,linux/arm64
           push: true
           file: build/server/Dockerfile
           tags: ${{ steps.meta.outputs.tags }},starlightautomation/autofeed-server:latest
@@ -79,7 +79,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64,linux/arm64
           push: true
           file: build/client/Dockerfile
           tags: ${{ steps.meta.outputs.tags }},starlightautomation/autofeed-client:latest
