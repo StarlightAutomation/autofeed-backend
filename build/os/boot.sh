@@ -1,8 +1,6 @@
 #! /bin/bash
 
 echo "Starting DIYAutoFeed OS..."
-# temporary docker login
-docker login ghcr.io -u nwilging -p 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
 
 ### Pull docker images if needed
 if [ -f "/server-image" ]; then
