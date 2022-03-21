@@ -38,6 +38,8 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
+        env:
+          DOCKER_IMAGE: ghcr.io/starlightautomation/autofeed-server
         with:
           context: .
           platforms: linux/amd64,linux/arm64
@@ -77,6 +79,8 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
+        env:
+          DOCKER_IMAGE: ghcr.io/starlightautomation/autofeed-client
         with:
           context: .
           platforms: linux/amd64,linux/arm64
