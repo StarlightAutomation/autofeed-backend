@@ -45,7 +45,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           file: build/server/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }},starlightautomation/autofeed-server:latest
+          tags: ${{ steps.meta.outputs.tags }},ghcr.io/starlightautomation/autofeed-server:latest
           labels: ${{ steps.meta.outputs.labels }}
 
   build-client:
@@ -86,7 +86,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           file: build/client/Dockerfile
-          tags: ${{ steps.meta.outputs.tags }},starlightautomation/autofeed-client:latest
+          tags: ${{ steps.meta.outputs.tags }},ghcr.io/starlightautomation/autofeed-client:latest
           labels: ${{ steps.meta.outputs.labels }}
 
   create-release:
