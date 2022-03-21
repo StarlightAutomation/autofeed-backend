@@ -10,9 +10,11 @@ RUN yarn install --network-timeout 100000 && yarn build
 
 RUN mkdir -p /etc/autofeed/client
 
-RUN mv build /etc/autofeed/client && \
-    mv node_modules /etc/autofeed/client && \
-    mv package.json /etc/autofeed/client
+RUN mv node_modules /etc/autofeed/client && \
+    mv assets /etc/autofeed/client && \
+    mv nuxt.config.js /etc/autofeed/client && \
+    mv package.json /etc/autofeed/client && \
+    mv .nuxt /etc/autofeed/client
 
 COPY ./data/environment/env.client /etc/autofeed/client/.env
 

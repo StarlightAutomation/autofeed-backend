@@ -1,0 +1,10 @@
+[Unit]
+Description=DIYAutoFeed Boot Service
+After=multi-user.target docker.service
+
+[Service]
+Type=idle
+ExecStart=/etc/autofeed/boot.sh
+
+[Install]
+WantedBy=multi-user.target

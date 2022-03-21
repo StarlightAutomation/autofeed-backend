@@ -9,7 +9,7 @@ if [ -z $SERVER_IMAGE ]; then
     exit 1
 fi
 if [ -z $CLIENT_IMAGE ]; then
-    echo "$CLIENT_IMAGE is required"
+    echo "CLIENT_IMAGE is required"
     exit 1
 fi
 
