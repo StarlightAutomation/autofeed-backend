@@ -1,0 +1,40 @@
+name: Build Raspberry Pi Disk Images
+on:
+  push:
+    tags: ['*.*.*']
+    #branch: ['docker-base-os']
+
+jobs:
+  build:
+    name: Build
+    #needs: create-release
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        package: [ bullseye-32, bullseye-64, buster-32 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Version
+        id: version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Build
+        env:
+          SERVER_IMAGE: ghcr.io/starlightautomation/autofeed-server:${{ steps.version.outputs.VERSION }}
+          CLIENT_IMAGE: ghcr.io/starlightautomation/autofeed-client:${{ steps.version.outputs.VERSION }}
+        run: |
+          sudo ./build/os/fetch-and-build.sh ${{ matrix.package }}
+          zip autofeed.img.zip autofeed.img
+
+#      - name: Upload Assets
+#        id: upload_assets
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ needs.create-release.outputs.upload_url }}
+#          asset_path: ./autofeed.img.zip
+#          asset_name: autofeed-${{ github.ref }}-${{ matrix.package }}.img.zip
+#          asset_content_type: application/zip
