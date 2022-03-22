@@ -9,7 +9,7 @@ fi
 mkfs.fat ${DEV}p1
 mount ${DEV}p1 ${MNT_DIR}
 tar xf boot.tar -C ${MNT_DIR} --numeric-owner
-. ./build/scripts/umount.sh
+. ./build/os/scripts/umount.sh
 
 # Create then resize root partition for new data
 mkfs.ext4 ${DEV}p2
@@ -27,7 +27,7 @@ sed -i "s/<DISK-ID>/${DISKID}/g" ./data/cmdline.txt.tmp
 rm -f ${MNT_DIR}/cmdline.txt
 cp --no-preserve=mode,ownership ./data/cmdline.txt.tmp ${MNT_DIR}/cmdline.txt
 rm -f ./data/cmdline.txt.tmp
-. ./build/scripts/umount.sh
+. ./build/os/scripts/umount.sh
 
 mount ${DEV}p2 ${MNT_DIR}
 tar xf custom-root.tar -C ${MNT_DIR} --numeric-owner
@@ -36,6 +36,6 @@ tar xf custom-root.tar -C ${MNT_DIR} --numeric-owner
 cp ./data/fstab ./data/fstab.tmp
 sed -i "s/<DISK-ID>/${DISKID}/g" ./data/fstab.tmp
 mv ./data/fstab.tmp ${MNT_DIR}/etc/fstab
-. ./build/scripts/umount.sh
+. ./build/os/scripts/umount.sh
 
-. ./build/scripts/losetup-clear.sh
+. ./build/os/scripts/losetup-clear.sh

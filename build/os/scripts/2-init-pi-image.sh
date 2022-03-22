@@ -22,4 +22,7 @@ losetup -fP ${IMAGE_NAME}
 DEV=$(losetup -a | grep "${IMAGE_NAME}" | awk -F: '{ print $1 }')
 
 CONTAINER=$(docker run -d --rm diyautofeed:latest /etc/autofeed/init.sh)
+
+# Ensures full init.sh script runs
+sleep 10
 docker export ${CONTAINER} > custom-root.tar

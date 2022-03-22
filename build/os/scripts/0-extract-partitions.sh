@@ -25,12 +25,12 @@ DEV=$(losetup -a | grep "${BASE_IMAGE}" | awk -F: '{ print $1 }')
 mount ${DEV}p1 $MNT_DIR
 tar cf boot.tar -C $MNT_DIR --numeric-owner .
 chown $(whoami) boot.tar
-. ./build/scripts/umount.sh
+. ./build/os/scripts/umount.sh
 
 # Extract Root Partition
 mount ${DEV}p2 $MNT_DIR
 tar cf root.tar -C $MNT_DIR --numeric-owner .
 chown $(whoami) root.tar
-. ./build/scripts/umount.sh
+. ./build/os/scripts/umount.sh
 
-. ./build/scripts/losetup-clear.sh
+. ./build/os/scripts/losetup-clear.sh

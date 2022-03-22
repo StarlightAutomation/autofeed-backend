@@ -1,0 +1,142 @@
+name: Build App and OS Images
+on:
+  push:
+    tags: ['*.*.*']
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-server:
+    name: Build Server
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: ghcr.io/starlightautomation/autofeed-server
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        env:
+          DOCKER_IMAGE: ghcr.io/starlightautomation/autofeed-server
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: build/server/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }},ghcr.io/starlightautomation/autofeed-server:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+  build-client:
+    name: Build Client
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v2
+        with:
+          images: ghcr.io/starlightautomation/autofeed-client
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        env:
+          DOCKER_IMAGE: ghcr.io/starlightautomation/autofeed-client
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: build/client/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }},ghcr.io/starlightautomation/autofeed-client:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+  create-release:
+    name: Create Release
+    needs: [build-server, build-client]
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+  build-os:
+    name: Build OS
+    needs: create-release
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        package: [ bullseye-32, bullseye-64, buster-32 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get Version
+        id: version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Build
+        run: |
+          sudo SERVER_IMAGE=ghcr.io/starlightautomation/autofeed-server:${{ steps.version.outputs.VERSION }} \
+               CLIENT_IMAGE=ghcr.io/starlightautomation/autofeed-client:${{ steps.version.outputs.VERSION }} \
+               ./build/os/fetch-and-build.sh ${{ matrix.package }}
+
+          zip autofeed.img.zip autofeed.img
+
+      - name: Upload Assets
+        id: upload_assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./autofeed.img.zip
+          asset_name: autofeed-${{ github.ref }}-${{ matrix.package }}.img.zip
+          asset_content_type: application/zip
