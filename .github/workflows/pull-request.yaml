@@ -32,6 +32,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install dependencies
-        run: yarn
+        run: cd server && yarn
       - name: Run Tests
-        run: yarn test
+        run: cd server && yarn test
