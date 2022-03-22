@@ -1,17 +1,16 @@
 import Config from "@services/config";
 import util from "util";
 import {ExecException} from "child_process";
-import gpio from "@services/gpio";
 const { exec } = require("child_process");
 
 export default class ScriptCaller
 {
-    public static async callGpioHL (pin: string, setting: boolean): Promise<boolean>
+    public static async callGpioHL (gpioId: string, setting: boolean): Promise<boolean>
     {
         return new Promise((resolve, reject) => {
-            const gpioConfig = Config.instance.getGpioById(pin);
+            const gpioConfig = Config.instance.getGpioById(gpioId);
             if (!gpioConfig) {
-                reject(new Error(util.format('%s is not a valid GPIO configuration', pin)));
+                reject(new Error(util.format('%s is not a valid GPIO configuration', gpioId)));
                 return;
             }
 
@@ -33,9 +32,10 @@ export default class ScriptCaller
              * on, then set to HIGH; when normal is on and desired state is on, then set to LOW; so on and so forth).
              */
             const expectedSetting = (gpioConfig.normal !== settingAsState) ? 'HIGH' : 'LOW';
+            const settingToUse = gpioConfig.normal !== settingAsState;
 
             exec(
-                util.format('python3 %s/gpio_hl.py %d %d', process.env.SCRIPTS_DIR, gpioConfig.pin, Number(setting)),
+                util.format('python3 %s/gpio_hl.py %d %d', process.env.SCRIPTS_DIR, gpioConfig.pin, Number(settingToUse)),
                 (error: ExecException | null, stdout: string) => {
                     if (error) {
                         reject(error);
@@ -52,12 +52,12 @@ export default class ScriptCaller
         });
     }
 
-    public static async callGpioStatus (pin: string): Promise<boolean>
+    public static async callGpioStatus (gpioId: string): Promise<boolean>
     {
         return new Promise((resolve, reject) => {
-            const gpioConfig = Config.instance.getGpioById(pin);
+            const gpioConfig = Config.instance.getGpioById(gpioId);
             if (!gpioConfig) {
-                reject(new Error(util.format('%s is not a valid GPIO configuration', pin)));
+                reject(new Error(util.format('%s is not a valid GPIO configuration', gpioId)));
                 return;
             }
 

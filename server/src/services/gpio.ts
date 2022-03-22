@@ -2,21 +2,20 @@ import ScriptCaller from "@services/ScriptCaller";
 
 export default class GPIO
 {
-    protected static async call (pin: string, setting: boolean): Promise<void>
+    public static async call (gpioId: string, setting: boolean): Promise<void>
     {
         try {
-            await ScriptCaller.callGpioHL(pin, setting);
+            await ScriptCaller.callGpioHL(gpioId, setting);
         } catch (e) {
             //
         }
     }
 
-    public static async getStatus (pin: string): Promise<boolean>
+    public static async getStatus (gpioId: string): Promise<boolean>
     {
         try {
-            return await ScriptCaller.callGpioStatus(pin);
+            return await ScriptCaller.callGpioStatus(gpioId);
         } catch (e) {
-            console.log(e);
             return false;
         }
     }
