@@ -20,5 +20,3 @@ elif [[ $CONTAINER == "client" ]]; then
         -p 3000:3000 \
         -d autofeed-client yarn start
 fi
-
-exit 0
