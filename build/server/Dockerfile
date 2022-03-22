@@ -5,7 +5,9 @@ WORKDIR /tmp/server
 
 COPY ./server /tmp/server
 
-RUN apt update -y && apt install -y python3-rpi.gpio
+RUN apt update -y && apt install -y python3-pip
+RUN python3 -m pip install rpi.gpio
+
 RUN yarn install --network-timeout 100000 && yarn build
 
 RUN mkdir -p /etc/autofeed/app && \
