@@ -17,3 +17,4 @@ server/.env
 raspbian-bullseye-64.img
 raspbian-bullseye-32.img
 raspbian-buster-32.img
+scripts/RPi

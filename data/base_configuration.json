@@ -3,22 +3,26 @@
     {
       "id": "VALVE_MAIN",
       "name": "Main Valve",
-      "pin": 22
+      "pin": 22,
+      "normal": "off"
     },
     {
       "id": "PUMP_STIR",
       "name": "Stir Pump",
-      "pin": 27
+      "pin": 27,
+      "normal": "on"
     },
     {
       "id": "PUMP_EGRESS",
       "name": "Egress Pump",
-      "pin": 17
+      "pin": 17,
+      "normal": "off"
     },
     {
       "id": "PUMP_AIR",
       "name": "Aeration Pump",
-      "pin": 4
+      "pin": 4,
+      "normal": "off"
     }
   ],
   "paths": {
