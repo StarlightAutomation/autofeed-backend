@@ -33,11 +33,13 @@ COPY ./data/base_configuration.json /etc/autofeed/data
 COPY ./build/os/init.sh /etc/autofeed/init.sh
 COPY ./build/os/update.sh /etc/autofeed/update.sh
 COPY ./build/os/boot.sh /etc/autofeed/boot.sh
+COPY ./build/os/start-container.sh /etc/autofeed/start-container.sh
 COPY ./build/os/boot.service /lib/systemd/system
 
 RUN chmod +x /etc/autofeed/init.sh
 RUN chmod +x /etc/autofeed/update.sh
 RUN chmod +x /etc/autofeed/boot.sh
+RUN chmod +x /etc/autofeed/start-container.sh
 RUN chmod 644 /lib/systemd/system/boot.service
 
 WORKDIR /etc/autofeed
