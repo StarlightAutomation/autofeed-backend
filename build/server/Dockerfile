@@ -16,6 +16,7 @@ RUN mv build /etc/autofeed/app && \
     mv node_modules /etc/autofeed/app && \
     mv package.json /etc/autofeed/app
 
+COPY ./scripts/*.py /etc/autofeed/py-scripts
 COPY ./data/environment/env.server /etc/autofeed/app/.env
 
 WORKDIR /etc/autofeed/app
