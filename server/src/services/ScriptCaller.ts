@@ -69,7 +69,7 @@ export default class ScriptCaller
                         return;
                     }
 
-                    const state = String(stdout).replace("\r\n", '') === '1' ? 'on' : 'off';
+                    const state = stdout.includes('status=1') ? 'on' : 'off';
 
                     /**
                      * This will essentially "reverse" the state based on the NO/NC status of the relay.

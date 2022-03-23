@@ -192,7 +192,7 @@ describe ('test ScriptCaller service', () => {
 
         when(configMock.getGpioById).calledWith(gpioId).mockReturnValue(gpioConfigMock);
 
-        exec.mockImplementation((command: string, callback: any) => callback(null, gpioPinStatus));
+        exec.mockImplementation((command: string, callback: any) => callback(null, 'status=' + gpioPinStatus));
 
         const status = await ScriptCaller.callGpioStatus(gpioId);
         expect(status).toBe(expectedStatus);

@@ -15,5 +15,5 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(int(pin), GPIO.OUT)
 status=GPIO.input(int(pin))
 
-print(status)
+print("status=%s" % status)
 exit(0)
