@@ -13,7 +13,7 @@ services:
       APP_DIR: /usr/src/app
       SCRIPTS_DIR: /etc/autofeed/scripts
     working_dir: /usr/src/app
-    command: 'yarn start'
+    command: 'node_modules/.bin/nodemon ./src/index.ts'
     ports:
       - '8080:8080'
 
