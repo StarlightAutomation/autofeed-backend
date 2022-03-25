@@ -16,6 +16,8 @@ Complete backend/frontend system for DIYAutoFeed compatible reservoir systems.
 
 ## End Users
 
+[Documentation](https://github.com/StarlightAutomation/autofeed-backend/wiki)
+
 Looking for a download? DIYAutoFeed is able to run on most Raspberry Pi versions, and has been
 tested on the 3 and 4. 64 bit downloads are available for supported devices as well.
 
