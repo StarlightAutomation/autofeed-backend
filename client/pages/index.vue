@@ -14,6 +14,11 @@
             <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.egress.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.egress.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.egress.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <ToggleSwitch
+              class="inline"
+              :enabled="deviceStatus.egress.status === true"
+              @toggle="(enabled) => toggleDeviceState(deviceStatus.egress.id, enabled)"
+            />
           </div>
         </div>
         <div>
@@ -22,6 +27,11 @@
             <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.stirPump.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.stirPump.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.stirPump.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <ToggleSwitch
+              class="inline"
+              :enabled="deviceStatus.stirPump.status === true"
+              @toggle="(enabled) => toggleDeviceState(deviceStatus.stirPump.id, enabled)"
+            />
           </div>
         </div>
         <div>
@@ -30,6 +40,11 @@
             <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.mainValve.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.mainValve.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.mainValve.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <ToggleSwitch
+              class="inline"
+              :enabled="deviceStatus.mainValve.status === true"
+              @toggle="(enabled) => toggleDeviceState(deviceStatus.mainValve.id, enabled)"
+            />
           </div>
         </div>
         <div>
@@ -38,6 +53,11 @@
             <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.aeration.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.aeration.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
             <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.aeration.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <ToggleSwitch
+              class="inline"
+              :enabled="deviceStatus.aeration.status === true"
+              @toggle="(enabled) => toggleDeviceState(deviceStatus.aeration.id, enabled)"
+            />
           </div>
         </div>
       </div>
@@ -67,10 +87,11 @@
 <script>
 import Schedule from "../components/Schedule";
 import moment from "moment";
+import ToggleSwitch from "../components/ToggleSwitch";
 
 export default {
   name: 'IndexPage',
-  components: {Schedule},
+  components: {ToggleSwitch, Schedule},
   data () {
     return {
       deviceStatus: {
@@ -146,6 +167,16 @@ export default {
     },
   },
   methods: {
+    toggleDeviceState (deviceId, setting) {
+      this.$axios.post('/api/control-device/' + deviceId, {
+        setting: (setting) ? 'on' : 'off',
+      })
+        .then((res) => {
+          this.getDeviceStatuses();
+        })
+        .catch((error) => console.error(error));
+    },
+
     dayButtonClass (day) {
       const style = [
         'text-center',

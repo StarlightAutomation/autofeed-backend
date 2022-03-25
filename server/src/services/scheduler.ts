@@ -3,7 +3,7 @@ import Config from "@services/config";
 import moment from "moment";
 import GPIO from "@services/gpio";
 import util from "util";
-import ScriptCaller from "@services/ScriptCaller";
+import Message from "@services/messaging/message";
 
 export interface IScheduleState
 {
@@ -53,39 +53,39 @@ export default class Scheduler extends EventEmitter
         const endTime = moment(schedule.end, timeFormat);
 
         if (currentTime.isBetween(beforeTime, endTime)) {
-            this.setStates(schedule.states).catch((error) => {
+            this.setStates(schedule.states, beforeTime, endTime).catch((error) => {
                 console.error(error);
             });
         } else {
-            this.revertStates(schedule.states).catch((error) => {
+            this.revertStates(schedule.states, beforeTime, endTime).catch((error) => {
                 console.error(error);
             });
         }
     }
 
-    protected async setStates (states: Array<IScheduleState>): Promise<void>
+    protected async setStates (states: Array<IScheduleState>, scheduleStart: moment.Moment, scheduleEnd: moment.Moment): Promise<void>
     {
         states.forEach((state: IScheduleState) => {
             if (state.state === 'on') {
-                this.setDeviceOn(state.id);
+                this.setDeviceOn(state.id, scheduleStart, scheduleEnd);
             } else {
-                this.setDeviceOff(state.id);
+                this.setDeviceOff(state.id, scheduleStart, scheduleEnd);
             }
         });
     }
 
-    protected async revertStates (states: Array<IScheduleState>): Promise<void>
+    protected async revertStates (states: Array<IScheduleState>, scheduleStart: moment.Moment, scheduleEnd: moment.Moment): Promise<void>
     {
         states.forEach((state: IScheduleState) => {
             if (state.state === 'on') {
-                this.setDeviceOff(state.id);
+                this.setDeviceOff(state.id, scheduleStart, scheduleEnd);
             } else {
-                this.setDeviceOn(state.id);
+                this.setDeviceOn(state.id, scheduleStart, scheduleEnd);
             }
         });
     }
 
-    protected async setDeviceOn (id: string): Promise<void>
+    protected async setDeviceOn (id: string, scheduleStart: moment.Moment, scheduleEnd: moment.Moment): Promise<void>
     {
         const gpio = Config.instance.getGpioById(id);
         if (!gpio) return;
@@ -93,11 +93,11 @@ export default class Scheduler extends EventEmitter
         const alreadyOn = await GPIO.getStatus(gpio.id);
         if (alreadyOn) return;
 
-        console.log(util.format('[%s] Set %s (pin %d) to ON', new Date().toISOString(), gpio.name, gpio.pin));
-        await ScriptCaller.callGpioHL(gpio.id, true);
+        console.log(util.format('[%s] Schedule - Set %s (pin %d) to ON', new Date().toISOString(), gpio.name, gpio.pin));
+        Message.dispatchScheduledAction(id, 'on', { scheduleStart, scheduleEnd });
     }
 
-    protected async setDeviceOff (id: string): Promise<void>
+    protected async setDeviceOff (id: string, scheduleStart: moment.Moment, scheduleEnd: moment.Moment): Promise<void>
     {
         const gpio = Config.instance.getGpioById(id);
         if (!gpio) return;
@@ -105,7 +105,7 @@ export default class Scheduler extends EventEmitter
         const alreadyOn = await GPIO.getStatus(gpio.id);
         if (!alreadyOn) return;
 
-        console.log(util.format('[%s] Set %s (pin %d) to OFF', new Date().toISOString(), gpio.name, gpio.pin));
-        await ScriptCaller.callGpioHL(gpio.id, false);
+        console.log(util.format('[%s] Schedule - Set %s (pin %d) to OFF', new Date().toISOString(), gpio.name, gpio.pin));
+        Message.dispatchScheduledAction(id, 'off', { scheduleStart, scheduleEnd });
     }
 }
