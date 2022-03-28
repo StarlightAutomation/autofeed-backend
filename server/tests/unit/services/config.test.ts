@@ -260,4 +260,80 @@ describe ('test Config', () => {
         expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/base_configuration.json', expectedJsonConfig);
         expect(config.getConfig()).toEqual(JSON.parse(expectedJsonConfig));
     });
+
+    test ('test updateGpioConfig', async () => {
+        const writeFileSync = jest.fn();
+        fs.writeFileSync = writeFileSync;
+
+        const configData: IConfig = {
+            gpio: [
+                {
+                    id: 'GPIO_TEST',
+                    pin: 12,
+                    normal: 'off',
+                    name: 'Gpio Test',
+                },
+                {
+                    id: 'GPIO_TEST2',
+                    pin: 5,
+                    normal: 'off',
+                    name: 'Gpio Test2',
+                },
+            ],
+            paths: {
+                scripts: {
+                    python: '/path/to/python/scripts',
+                },
+                application: '/path/to/app',
+            },
+            schedules: [],
+        };
+        const config = new Config(configData);
+
+        const updatedGpioConfigs: any = [
+            {
+                id: 'GPIO_TEST',
+                pin: 13,
+                normal: 'on',
+                name: 'Gpio Test Updated',
+            },
+            {
+                id: 'GPIO_TEST2',
+                pin: 5,
+                normal: 'off',
+                name: 'Gpio Test2',
+            },
+        ];
+
+        const expectedJsonConfig = JSON.stringify({
+            gpio: [
+                {
+                    id: 'GPIO_TEST',
+                    pin: 13,
+                    normal: 'on',
+                    name: 'Gpio Test Updated',
+                },
+                {
+                    id: 'GPIO_TEST2',
+                    pin: 5,
+                    normal: 'off',
+                    name: 'Gpio Test2',
+                },
+            ],
+            paths: {
+                scripts: {
+                    python: '/path/to/python/scripts',
+                },
+                application: '/path/to/app',
+            },
+            schedules: [],
+        });
+
+        process.env.DATA_DIR = '/path/to/data';
+        await config.updateGpioConfig(updatedGpioConfigs);
+
+        expect(writeFileSync).toHaveBeenCalledTimes(1);
+        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/base_configuration.json', expectedJsonConfig);
+        expect(config.getConfig()).toEqual(JSON.parse(expectedJsonConfig));
+    });
 });

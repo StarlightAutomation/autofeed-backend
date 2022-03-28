@@ -62,4 +62,10 @@ export default class Config
         this.config.schedules = schedules;
         await fs.writeFileSync(util.format('%s/base_configuration.json', process.env.DATA_DIR), JSON.stringify(this.config));
     }
+
+    public async updateGpioConfig (gpioConfig: Array<IGPIOConfig>): Promise<void>
+    {
+        this.config.gpio = gpioConfig;
+        await fs.writeFileSync(util.format('%s/base_configuration.json', process.env.DATA_DIR), JSON.stringify(this.config));
+    }
 }

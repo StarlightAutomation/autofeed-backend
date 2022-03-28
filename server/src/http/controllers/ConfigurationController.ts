@@ -12,6 +12,7 @@ export default class ConfigurationController extends AbstractController
         this.updateSchedules();
         this.getDeviceStatus();
         this.controlDevice();
+        this.updateGpioConfig();
     }
 
     protected index (): void
@@ -26,6 +27,15 @@ export default class ConfigurationController extends AbstractController
         this.app.put('/schedules', async (req: Request, res: Response) => {
             const schedules = req.body.schedules || [];
             await Config.instance.updateSchedules(schedules);
+            return res.status(200).json(Config.instance.getConfig());
+        });
+    }
+
+    protected updateGpioConfig (): void
+    {
+        this.app.put('/gpio-config', async (req: Request, res: Response) => {
+            const gpioConfig = req.body.gpioConfig || [];
+            await Config.instance.updateGpioConfig(gpioConfig);
             return res.status(200).json(Config.instance.getConfig());
         });
     }

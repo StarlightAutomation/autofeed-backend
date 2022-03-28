@@ -19,6 +19,25 @@ export const actions = {
       }).catch(reject);
     });
   },
+  saveConfig ({ commit, getters}, modifiedConfig) {
+    return new Promise((resolve, reject) => {
+      const existingConfigs = getters.config.gpio || [];
+      for (const i in existingConfigs) {
+        const config = existingConfigs[i];
+        if (config.id === modifiedConfig.id) {
+          existingConfigs[i] = modifiedConfig;
+          break;
+        }
+      }
+
+      axios.put('/api/gpio-config', {
+        gpioConfig: existingConfigs,
+      }).then((res) => {
+        commit('SET_CONFIG', res.data);
+        resolve(res.data);
+      }).catch(reject);
+    });
+  },
   saveSchedules ({ commit, getters }, modifiedSchedule) {
     return new Promise((resolve, reject) => {
       const existingSchedules = getters.schedules || [];
