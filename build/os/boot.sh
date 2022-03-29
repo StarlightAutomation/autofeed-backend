@@ -25,12 +25,12 @@ fi
 
 if [ ! "$(docker ps -a | grep autofeed-server)" ]; then
   echo "Initializing Server"
-  . ./start-container.sh server
+  . /etc/autofeed/start-container.sh server
 fi
 
 if [ ! "$(docker ps -a | grep autofeed-client)" ]; then
   echo "Initializing Client"
-  . ./start-container.sh client
+  . /etc/autofeed/start-container.sh client
 fi
 
 echo "Boot Complete!"

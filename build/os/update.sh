@@ -10,14 +10,14 @@ if [[ $APP == "server" ]]; then
     docker stop autofeed-server
     docker rm autofeed-server
 
-    . ./start-container.sh server
+    . /etc/autofeed/start-container.sh server
 elif [[ $APP == "client" ]]; then
     docker tag $IMAGE autofeed-client
 
     docker stop autofeed-client
     docker rm autofeed-client
 
-    . ./start-container.sh client
+    . /etc/autofeed/start-container.sh client
 else
     echo "Invalid app '$APP'"
     exit 1
