@@ -11,6 +11,7 @@ if [[ $CONTAINER == "server" ]]; then
         --privileged \
         -p 8080:8080 \
         -e TZ=$TZ \
+        -e NODE_ENV=production \
         --mount type=bind,src=/etc/autofeed/data,dst=/etc/autofeed/data \
         -d autofeed-server node .
 elif [[ $CONTAINER == "client" ]]; then

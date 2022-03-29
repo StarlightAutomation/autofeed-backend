@@ -257,7 +257,7 @@ describe ('test Config', () => {
         await config.updateSchedules(updatedSchedules);
 
         expect(writeFileSync).toHaveBeenCalledTimes(1);
-        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/base_configuration.json', expectedJsonConfig);
+        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/config.json', expectedJsonConfig);
         expect(config.getConfig()).toEqual(JSON.parse(expectedJsonConfig));
     });
 
@@ -333,7 +333,7 @@ describe ('test Config', () => {
         await config.updateGpioConfig(updatedGpioConfigs);
 
         expect(writeFileSync).toHaveBeenCalledTimes(1);
-        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/base_configuration.json', expectedJsonConfig);
+        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/config.json', expectedJsonConfig);
         expect(config.getConfig()).toEqual(JSON.parse(expectedJsonConfig));
     });
 });

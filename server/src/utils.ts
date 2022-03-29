@@ -43,3 +43,11 @@ export const loadControllers = (path: string = process.cwd() + '/build/http/cont
 
     return controllers;
 };
+
+export const configFileExists = (path: string): boolean => {
+    return fs.existsSync(path);
+};
+
+export const copyBaseConfiguration = (baseConfigPath: string, configFilePath: string): void => {
+    fs.copyFileSync(baseConfigPath, configFilePath);
+};
