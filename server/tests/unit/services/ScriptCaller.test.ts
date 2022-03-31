@@ -1,8 +1,10 @@
 jest.mock("child_process");
+jest.mock("@services/mqtt/client");
 import {when} from "jest-when";
 import each from "jest-each";
 import Config from "@services/config";
 import ScriptCaller from "@services/ScriptCaller";
+import MqttClient from "@services/mqtt/client";
 const { exec } = require("child_process");
 
 describe ('test ScriptCaller service', () => {
@@ -50,6 +52,9 @@ describe ('test ScriptCaller service', () => {
         expectedGpioSetting: string,
         expectedScriptSetting: number
     ) => {
+        const mqttPublishGpioState = jest.fn();
+        MqttClient.publishGpioState = mqttPublishGpioState;
+
         const configMock: any = {
             getGpioById: jest.fn(),
         };
@@ -75,9 +80,14 @@ describe ('test ScriptCaller service', () => {
         expect(configMock.getGpioById).toHaveBeenCalledWith(gpioId);
         expect(exec).toHaveBeenCalledTimes(1);
         expect(exec).toHaveBeenCalledWith('python3 /path/to/scripts/gpio_hl.py 12 ' + expectedScriptSetting, expect.any(Function));
+        expect(mqttPublishGpioState).toHaveBeenCalledTimes(1);
+        expect(mqttPublishGpioState).toHaveBeenCalledWith(gpioId, setting ? 'on' : 'off');
     });
 
     test ('test callGpioHL rejects when exec stdout is not valid', async () => {
+        const mqttPublishGpioState = jest.fn();
+        MqttClient.publishGpioState = mqttPublishGpioState;
+
         const configMock: any = {
             getGpioById: jest.fn(),
         };
@@ -104,9 +114,13 @@ describe ('test ScriptCaller service', () => {
         expect(configMock.getGpioById).toHaveBeenCalledWith(gpioId);
         expect(exec).toHaveBeenCalledTimes(1);
         expect(exec).toHaveBeenCalledWith('python3 /path/to/scripts/gpio_hl.py 12 1', expect.any(Function));
+        expect(mqttPublishGpioState).not.toHaveBeenCalled();
     });
 
     test ('test callGpioHL rejects when exec returns an error', async () => {
+        const mqttPublishGpioState = jest.fn();
+        MqttClient.publishGpioState = mqttPublishGpioState;
+
         const configMock: any = {
             getGpioById: jest.fn(),
         };
@@ -133,9 +147,13 @@ describe ('test ScriptCaller service', () => {
         expect(configMock.getGpioById).toHaveBeenCalledWith(gpioId);
         expect(exec).toHaveBeenCalledTimes(1);
         expect(exec).toHaveBeenCalledWith('python3 /path/to/scripts/gpio_hl.py 12 1', expect.any(Function));
+        expect(mqttPublishGpioState).not.toHaveBeenCalled();
     });
 
     test ('test callGpioHL throws error when gpio config not valid', async () => {
+        const mqttPublishGpioState = jest.fn();
+        MqttClient.publishGpioState = mqttPublishGpioState;
+
         const configMock: any = {
             getGpioById: jest.fn(),
         };
@@ -152,6 +170,7 @@ describe ('test ScriptCaller service', () => {
         expect(configMock.getGpioById).toHaveBeenCalledTimes(1);
         expect(configMock.getGpioById).toHaveBeenCalledWith(gpioId);
         expect(exec).not.toHaveBeenCalled();
+        expect(mqttPublishGpioState).not.toHaveBeenCalled();
     });
 
     each([

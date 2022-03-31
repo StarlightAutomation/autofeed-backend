@@ -2,6 +2,7 @@ require('module-alias/register');
 require('dotenv').config();
 import HttpService from "@services/http";
 import Scheduler from "@services/scheduler";
+import MqttClient from "@services/mqtt/client";
 import {configFileExists, copyBaseConfiguration, loadControllers} from "@app/utils";
 import Config from "@services/config";
 import util from "util";
@@ -35,6 +36,11 @@ HttpService.instance = http;
 
 const config = new Config(baseConfig);
 Config.instance = config;
+
+if (baseConfig.mqtt) {
+    MqttClient.initialize(baseConfig);
+    MqttClient.connect();
+}
 
 const scheduler = new Scheduler();
 scheduler.start();

@@ -3,6 +3,7 @@ import {Request, Response} from "express";
 import Config from "@services/config";
 import GPIO, {GPIO_STATE} from "@services/gpio";
 import Message from "@services/messaging/message";
+import MqttClient from "@services/mqtt/client";
 
 export default class ConfigurationController extends AbstractController
 {
@@ -13,6 +14,7 @@ export default class ConfigurationController extends AbstractController
         this.getDeviceStatus();
         this.controlDevice();
         this.updateGpioConfig();
+        this.updateMqttConfig();
     }
 
     protected index (): void
@@ -36,6 +38,24 @@ export default class ConfigurationController extends AbstractController
         this.app.put('/gpio-config', async (req: Request, res: Response) => {
             const gpioConfig = req.body.gpioConfig || [];
             await Config.instance.updateGpioConfig(gpioConfig);
+            return res.status(200).json(Config.instance.getConfig());
+        });
+    }
+
+    protected updateMqttConfig (): void
+    {
+        this.app.put('/mqtt-config', async (req: Request, res: Response) => {
+            const { host, nodePrefix, username, password } = req.body;
+
+            MqttClient.disconnect();
+            if (!host || !nodePrefix) {
+                await Config.instance.updateMqttConfig(undefined);
+            } else {
+                await Config.instance.updateMqttConfig({ host, nodePrefix, username, password });
+                MqttClient.initialize(Config.instance.getConfig());
+                MqttClient.connect();
+            }
+
             return res.status(200).json(Config.instance.getConfig());
         });
     }

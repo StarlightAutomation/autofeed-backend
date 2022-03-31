@@ -1,6 +1,7 @@
 import Config from "@services/config";
 import util from "util";
 import {ExecException} from "child_process";
+import MqttClient from "@services/mqtt/client";
 const { exec } = require("child_process");
 
 export default class ScriptCaller
@@ -31,18 +32,21 @@ export default class ScriptCaller
              * state. If this is true, then the pin will be set to HIGH (e.g. when normal is off and desired state is
              * on, then set to HIGH; when normal is on and desired state is on, then set to LOW; so on and so forth).
              */
-            const expectedSetting = (gpioConfig.normal !== settingAsState) ? 'HIGH' : 'LOW';
-            const settingToUse = gpioConfig.normal !== settingAsState;
+            const gpioSetting = gpioConfig.normal !== settingAsState;
+            const expectedHLSetting = gpioSetting ? 'HIGH' : 'LOW';
 
             exec(
-                util.format('python3 %s/gpio_hl.py %d %d', process.env.SCRIPTS_DIR, gpioConfig.pin, Number(settingToUse)),
+                util.format('python3 %s/gpio_hl.py %d %d', process.env.SCRIPTS_DIR, gpioConfig.pin, Number(gpioSetting)),
                 (error: ExecException | null, stdout: string) => {
                     if (error) {
                         reject(error);
                         return;
                     }
 
-                    if (stdout.includes(util.format('Pin %d set to %s', gpioConfig.pin, expectedSetting))) {
+                    if (stdout.includes(util.format('Pin %d set to %s', gpioConfig.pin, expectedHLSetting))) {
+                        // Update state in MQTT
+                        MqttClient.publishGpioState(gpioId, settingAsState);
+
                         resolve(true);
                         return;
                     }

@@ -2,6 +2,15 @@ import {ISchedule} from "@services/scheduler";
 import util from "util";
 const fs = require("fs");
 
+export interface IMqttConfig
+{
+    host: string;
+    nodePrefix: string;
+    haDiscoveryPrefix?: string;
+    username?: string;
+    password?: string;
+}
+
 export interface IGPIOConfig
 {
     id: string;
@@ -22,6 +31,7 @@ export interface IConfig
     };
 
     schedules: Array<ISchedule>;
+    mqtt?: IMqttConfig;
 }
 
 export default class Config
@@ -60,12 +70,23 @@ export default class Config
     public async updateSchedules (schedules: Array<ISchedule>): Promise<void>
     {
         this.config.schedules = schedules;
-        await fs.writeFileSync(util.format('%s/config.json', process.env.DATA_DIR), JSON.stringify(this.config));
+        await this.writeConfig();
     }
 
     public async updateGpioConfig (gpioConfig: Array<IGPIOConfig>): Promise<void>
     {
         this.config.gpio = gpioConfig;
+        await this.writeConfig();
+    }
+
+    public async updateMqttConfig (mqttConfig?: IMqttConfig): Promise<void>
+    {
+        this.config.mqtt = mqttConfig;
+        await this.writeConfig();
+    }
+
+    protected async writeConfig (): Promise<void>
+    {
         await fs.writeFileSync(util.format('%s/config.json', process.env.DATA_DIR), JSON.stringify(this.config));
     }
 }

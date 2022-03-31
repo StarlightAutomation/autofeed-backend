@@ -17,15 +17,11 @@
         </div>
 
         <div class="-mr-2 flex items-center sm:hidden">
-          <!-- Mobile menu button -->
           <button
-            type="button"
             class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-            aria-controls="mobile-menu"
-            aria-expanded="false"
             @click="menuOpen = !menuOpen"
           >
-            <font-awesome-icon :icon="['fas', 'bars']" />
+            <font-awesome-icon :icon="['fas', 'bars']" class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -59,6 +55,12 @@ export default {
           text: 'GPIO Configuration',
           icon: '',
           href: '/gpio-config',
+        },
+        {
+          id: 'mqtt-config',
+          text: 'Home Assistant Configuration',
+          icon: '',
+          href: '/mqtt-config',
         }
       ],
       menuOpen: false,
