@@ -25,6 +25,10 @@ describe ('test Config', () => {
                 application: '/path/to/app',
             },
             schedules: [],
+            mqtt: {
+                host: 'mqtt://localhost:1883',
+                nodePrefix: 'test',
+            },
         };
 
         const config = new Config(configData);
@@ -331,6 +335,85 @@ describe ('test Config', () => {
 
         process.env.DATA_DIR = '/path/to/data';
         await config.updateGpioConfig(updatedGpioConfigs);
+
+        expect(writeFileSync).toHaveBeenCalledTimes(1);
+        expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/config.json', expectedJsonConfig);
+        expect(config.getConfig()).toEqual(JSON.parse(expectedJsonConfig));
+    });
+
+
+    test ('test updateMqttConfig', async () => {
+        const writeFileSync = jest.fn();
+        fs.writeFileSync = writeFileSync;
+
+        const configData: IConfig = {
+            gpio: [
+                {
+                    id: 'GPIO_TEST',
+                    pin: 12,
+                    normal: 'off',
+                    name: 'Gpio Test',
+                },
+                {
+                    id: 'GPIO_TEST2',
+                    pin: 5,
+                    normal: 'off',
+                    name: 'Gpio Test2',
+                },
+            ],
+            paths: {
+                scripts: {
+                    python: '/path/to/python/scripts',
+                },
+                application: '/path/to/app',
+            },
+            schedules: [],
+            mqtt: {
+                host: 'mqtt://localhost:1883',
+                nodePrefix: 'test',
+            },
+        };
+        const config = new Config(configData);
+
+        const updatedMqttConfig: any = {
+            host: 'mqtt://localhost-updated:1883',
+            nodePrefix: 'test-updated',
+            username: 'updated',
+            password: 'data',
+        };
+
+        const expectedJsonConfig = JSON.stringify({
+            gpio: [
+                {
+                    id: 'GPIO_TEST',
+                    pin: 12,
+                    normal: 'off',
+                    name: 'Gpio Test',
+                },
+                {
+                    id: 'GPIO_TEST2',
+                    pin: 5,
+                    normal: 'off',
+                    name: 'Gpio Test2',
+                },
+            ],
+            paths: {
+                scripts: {
+                    python: '/path/to/python/scripts',
+                },
+                application: '/path/to/app',
+            },
+            schedules: [],
+            mqtt: {
+                host: 'mqtt://localhost-updated:1883',
+                nodePrefix: 'test-updated',
+                username: 'updated',
+                password: 'data',
+            },
+        });
+
+        process.env.DATA_DIR = '/path/to/data';
+        await config.updateMqttConfig(updatedMqttConfig);
 
         expect(writeFileSync).toHaveBeenCalledTimes(1);
         expect(writeFileSync).toHaveBeenCalledWith('/path/to/data/config.json', expectedJsonConfig);

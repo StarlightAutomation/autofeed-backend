@@ -4,6 +4,7 @@ import moment from "moment";
 import GPIO from "@services/gpio";
 import util from "util";
 import Message from "@services/messaging/message";
+import MqttClient from "@services/mqtt/client";
 
 export interface IScheduleState
 {
@@ -27,12 +28,27 @@ export default class Scheduler extends EventEmitter
     public static instance: Scheduler;
 
     protected scheduleInterval?: NodeJS.Timer;
+    protected mqttUpdateInterval?: NodeJS.Timer;
 
     public start (): void
     {
         this.scheduleInterval = setInterval(() => {
             this.runSchedule();
         }, 1000);
+
+        this.updateMqttStates();
+        this.mqttUpdateInterval = setInterval(() => {
+            this.updateMqttStates();
+        }, 60000);
+    }
+
+    protected updateMqttStates (): void
+    {
+        for (const gpio of Config.instance.getConfig().gpio) {
+            GPIO.getStatus(gpio.id).then((on: boolean) => {
+                MqttClient.publishGpioState(gpio.id, (on) ? 'on' : 'off');
+            });
+        }
     }
 
     protected runSchedule (): void
