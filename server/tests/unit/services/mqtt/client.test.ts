@@ -170,7 +170,7 @@ describe ('test MqttClient', () => {
         const mqttClientMock: any = {
             on: jest.fn(),
             end: jest.fn(),
-            connected: status
+            connected: status,
         };
 
         when(connect).calledWith('http://localhost:1883', {
@@ -195,7 +195,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -271,7 +271,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -347,7 +347,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -425,7 +425,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -489,7 +489,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -549,7 +549,7 @@ describe ('test MqttClient', () => {
                     normal: 'on',
                     name: 'Test GPIO',
                     pin: 12,
-                }
+                },
             ],
             paths: {
                 scripts: {

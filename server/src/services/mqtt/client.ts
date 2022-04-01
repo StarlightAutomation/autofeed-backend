@@ -21,7 +21,7 @@ export default class MqttClient
     public static instance: MqttClient;
 
     protected config: IConfig;
-    protected mqttConfig: IMqttConfig
+    protected mqttConfig: IMqttConfig;
 
     protected client?: Client;
 

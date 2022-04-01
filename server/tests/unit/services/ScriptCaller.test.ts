@@ -45,12 +45,12 @@ describe ('test ScriptCaller service', () => {
             'on',
             'HIGH',
             1,
-        ]
+        ],
     ]).test ('test callGpioHL calls correct setting based on gpio normal config', async (
         setting: boolean,
         normal: string,
         expectedGpioSetting: string,
-        expectedScriptSetting: number
+        expectedScriptSetting: number,
     ) => {
         const mqttPublishGpioState = jest.fn();
         MqttClient.publishGpioState = mqttPublishGpioState;

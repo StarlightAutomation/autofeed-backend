@@ -21,7 +21,7 @@ if (!configFileExists(util.format('%s/config.json', process.env.DATA_DIR))) {
     console.log('Moving %s/base_configuration.json to %s/config.json', process.env.DATA_DIR, process.env.DATA_DIR);
     copyBaseConfiguration(
         util.format('%s/base_configuration.json', process.env.DATA_DIR),
-        util.format('%s/config.json', process.env.DATA_DIR)
+        util.format('%s/config.json', process.env.DATA_DIR),
     );
 }
 

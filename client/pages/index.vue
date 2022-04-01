@@ -1,9 +1,13 @@
 <template>
   <div class="w-full md:w-2/3 ml-auto mr-auto md:px-0 px-3">
-    <h1 class="text-2xl mt-5 border-b pb-2">DIYAutoFeed Control</h1>
+    <h1 class="text-2xl mt-5 border-b pb-2">
+      DIYAutoFeed Control
+    </h1>
 
     <div class="mt-3 border border-dashed border-blue-500 p-3">
-      <h1 class="text-lg border-b border-blue-300 pb-1">Current Status</h1>
+      <h1 class="text-lg border-b border-blue-300 pb-1">
+        Current Status
+      </h1>
       <div class="mt-2">
         {{ currentTime }}
       </div>
@@ -11,9 +15,9 @@
         <div>
           Egress Pump:
           <div class="inline-block">
-            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.egress.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.egress.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.egress.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.egress.status === undefined" :icon="['fas', 'spinner']" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.egress.status === true" :icon="['fas', 'check-circle']" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.egress.status === false" :icon="['fas', 'times-circle']" class="text-red-500 ml-3 w-4 h-4 inline" />
             <ToggleSwitch
               class="inline"
               :enabled="deviceStatus.egress.status === true"
@@ -24,9 +28,9 @@
         <div>
           Stir Pump:
           <div class="inline-block">
-            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.stirPump.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.stirPump.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.stirPump.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.stirPump.status === undefined" :icon="['fas', 'spinner']" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.stirPump.status === true" :icon="['fas', 'check-circle']" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.stirPump.status === false" :icon="['fas', 'times-circle']" class="text-red-500 ml-3 w-4 h-4 inline" />
             <ToggleSwitch
               class="inline"
               :enabled="deviceStatus.stirPump.status === true"
@@ -37,9 +41,9 @@
         <div>
           Main Valve:
           <div class="inline-block">
-            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.mainValve.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.mainValve.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.mainValve.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.mainValve.status === undefined" :icon="['fas', 'spinner']" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.mainValve.status === true" :icon="['fas', 'check-circle']" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.mainValve.status === false" :icon="['fas', 'times-circle']" class="text-red-500 ml-3 w-4 h-4 inline" />
             <ToggleSwitch
               class="inline"
               :enabled="deviceStatus.mainValve.status === true"
@@ -50,9 +54,9 @@
         <div>
           Aeration Pump:
           <div class="inline-block">
-            <font-awesome-icon :icon="['fas', 'spinner']" v-if="deviceStatus.aeration.status === undefined" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'check-circle']" v-if="deviceStatus.aeration.status === true" class="text-green-500 ml-3 w-4 h-4 inline" />
-            <font-awesome-icon :icon="['fas', 'times-circle']" v-if="deviceStatus.aeration.status === false" class="text-red-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.aeration.status === undefined" :icon="['fas', 'spinner']" spin class="text-gray-600 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.aeration.status === true" :icon="['fas', 'check-circle']" class="text-green-500 ml-3 w-4 h-4 inline" />
+            <font-awesome-icon v-if="deviceStatus.aeration.status === false" :icon="['fas', 'times-circle']" class="text-red-500 ml-3 w-4 h-4 inline" />
             <ToggleSwitch
               class="inline"
               :enabled="deviceStatus.aeration.status === true"
@@ -66,32 +70,35 @@
     <div class="mt-3">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-7">
         <button
-          v-for="template in scheduleTemplate" :key="template.id"
+          v-for="template in scheduleTemplate"
+          :key="template.id"
           :class="dayButtonClass(template.id)"
           @click="selectedDay = template.id"
-        >{{ template.name }}</button>
+        >
+          {{ template.name }}
+        </button>
       </div>
     </div>
 
     <div class="mt-3">
       <Schedule
+        :key="selectedDay"
         :schedule="selectedSchedule"
         :gpio="gpio"
         :day="selectedDay"
-        :key="selectedDay"
         @saved="saveModifiedSchedule"
       />
     </div>
   </div>
 </template>
 <script>
-import Schedule from "../components/Schedule";
 import moment from "moment";
+import Schedule from "../components/Schedule";
 import ToggleSwitch from "../components/ToggleSwitch";
 
 export default {
   name: 'IndexPage',
-  components: {ToggleSwitch, Schedule},
+  components: { ToggleSwitch, Schedule },
   data () {
     return {
       deviceStatus: {
@@ -144,12 +151,12 @@ export default {
           id: "sunday",
           name: "Sunday",
         },
-      ]
+      ],
     };
   },
   computed: {
     selectedSchedule () {
-      const filtered = this.$store.getters['api/schedules'].filter((schedule) => schedule.id === this.selectedDay);
+      const filtered = this.$store.getters['api/schedules'].filter(schedule => schedule.id === this.selectedDay);
       const schedule = filtered[0] || {
         start: undefined,
         end: undefined,
@@ -157,7 +164,7 @@ export default {
       };
 
       if (schedule.copy) {
-        return { ...(this.$store.getters['api/schedules'].filter((copied) => copied.id === schedule.copy)[0]) || {}, ...schedule };
+        return { ...(this.$store.getters['api/schedules'].filter(copied => copied.id === schedule.copy)[0]) || {}, ...schedule };
       }
 
       return schedule;
@@ -174,7 +181,7 @@ export default {
         .then((res) => {
           this.getDeviceStatuses();
         })
-        .catch((error) => console.error(error));
+        .catch(error => console.error(error));
     },
 
     dayButtonClass (day) {
@@ -222,11 +229,11 @@ export default {
     this.getDeviceStatuses();
     this.selectedDay = moment().format('dddd').toLowerCase();
     this.currentTimeInterval = setInterval(() => {
-      this.currentTime = moment().format('dddd MMM Do - hh:mm:ss A z')
+      this.currentTime = moment().format('dddd MMM Do - hh:mm:ss A z');
     }, 1000);
   },
-  beforeDestroy() {
+  beforeDestroy () {
     clearInterval(this.currentTimeInterval);
-  }
+  },
 };
 </script>

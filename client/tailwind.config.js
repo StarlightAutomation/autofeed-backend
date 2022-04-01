@@ -13,7 +13,7 @@ module.exports = {
     options: {
       safelist: [
         /-fa$/,
-        /^fa-/
+        /^fa-/,
       ],
     },
   },

@@ -1,0 +1,23 @@
+{
+  "root": true,
+  "rules": {
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "semi": [2, "always"],
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "functions": "always-multiline",
+      "objects": "always-multiline"
+    }],
+    "prefer-const": "off",
+    "vue/order-in-components": "off",
+    "quotes": "off",
+    "no-self-compare": "off",
+    "vue/require-prop-types": "off",
+    "vue/no-side-effects-in-computed-properties": "off",
+    "vue/no-mutating-props": "off",
+    "vue/multi-word-component-names": "off"
+  },
+  "extends": [
+    "@nuxtjs"
+  ]
+}

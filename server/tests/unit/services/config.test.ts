@@ -16,7 +16,7 @@ describe ('test Config', () => {
                     pin: 12,
                     normal: 'off',
                     name: 'Gpio Test',
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -51,7 +51,7 @@ describe ('test Config', () => {
                     pin: 13,
                     normal: 'on',
                     name: 'Gpio Test 2',
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -105,7 +105,7 @@ describe ('test Config', () => {
                         {
                             id: 'GPIO_TEST',
                             state: 'on',
-                        }
+                        },
                     ],
                 },
                 {
@@ -118,7 +118,7 @@ describe ('test Config', () => {
                         {
                             id: 'GPIO_TEST',
                             state: 'off',
-                        }
+                        },
                     ],
                 },
             ],
@@ -140,7 +140,7 @@ describe ('test Config', () => {
                 {
                     id: 'GPIO_TEST',
                     state: 'on',
-                }
+                },
             ],
         });
 
@@ -154,7 +154,7 @@ describe ('test Config', () => {
                 {
                     id: 'GPIO_TEST',
                     state: 'off',
-                }
+                },
             ],
         });
 
@@ -172,7 +172,7 @@ describe ('test Config', () => {
                     pin: 12,
                     normal: 'off',
                     name: 'Gpio Test',
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -204,7 +204,7 @@ describe ('test Config', () => {
                     {
                         id: 'GPIO_TEST',
                         state: 'off',
-                    }
+                    },
                 ],
             },
             {
@@ -224,7 +224,7 @@ describe ('test Config', () => {
                     pin: 12,
                     normal: 'off',
                     name: 'Gpio Test',
-                }
+                },
             ],
             paths: {
                 scripts: {
@@ -243,7 +243,7 @@ describe ('test Config', () => {
                         {
                             id: 'GPIO_TEST',
                             state: 'off',
-                        }
+                        },
                     ],
                 },
                 {

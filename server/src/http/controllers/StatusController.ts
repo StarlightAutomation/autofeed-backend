@@ -1,6 +1,5 @@
 import AbstractController from "@http/AbstractController";
 import {Request, Response} from "express";
-import GPIO from "@services/gpio";
 
 export default class StatusController extends AbstractController
 {
