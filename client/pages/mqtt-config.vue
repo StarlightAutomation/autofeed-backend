@@ -26,7 +26,7 @@
         </div>
         <input v-model="editedConfig.nodePrefix" type="text" class="text-input font-mono" placeholder="autofeed_1">
         <div class="rounded border border-blue-500 bg-blue-300 shadow p-2 text-blue-800 mt-1">
-          <font-awesome-icon :icon="['fas', 'info']" class="mr-3" />
+          <font-awesome-icon :icon="['fas', 'info']" class="mr-3 w-4 h-4 inline" />
           This should be a unique identifier for this AutoFeed device. For example,
           <span class="font-mono text-gray-800">autofeed_1</span>, which will produce entities with IDs
           such as <span class="font-mono text-gray-800">switch.autofeed_1_egress_pump</span>.
