@@ -4,12 +4,13 @@
       <div class="w-full text-center ml-auto mr-auto text-blue-500">
         <font-awesome-icon
           :icon="['fas', 'spinner']"
-          spin size="5x"
+          spin
+          size="5x"
           class="mt-16"
         />
       </div>
     </div>
-    <div :class="bodyClass" v-else>
+    <div v-else :class="bodyClass">
       <Navbar />
       <Nuxt />
     </div>
@@ -19,7 +20,7 @@
 import Navbar from "../components/Navbar";
 export default {
   components: {
-    Navbar
+    Navbar,
   },
   data () {
     return {
@@ -74,7 +75,9 @@ export default {
       this.lightingMode = localStorage.getItem('lightingMode') || 'light';
     }
 
-    this.$store.dispatch('api/getConfig').then((res) => this.loading = false);
+    this.$store.dispatch('api/getConfig').then((res) => {
+      this.loading = false;
+    });
   },
 };
 </script>

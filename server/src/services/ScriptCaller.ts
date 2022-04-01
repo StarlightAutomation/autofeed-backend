@@ -89,7 +89,7 @@ export default class ScriptCaller
                      * And vice versa
                      */
                     resolve(gpioConfig.normal !== state);
-                }
+                },
             );
         });
     }

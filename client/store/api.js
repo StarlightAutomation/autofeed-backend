@@ -19,7 +19,7 @@ export const actions = {
       }).catch(reject);
     });
   },
-  saveConfig ({ commit, getters}, modifiedConfig) {
+  saveConfig ({ commit, getters }, modifiedConfig) {
     return new Promise((resolve, reject) => {
       const existingConfigs = getters.config.gpio || [];
       for (const i in existingConfigs) {

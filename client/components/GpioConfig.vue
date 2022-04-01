@@ -4,11 +4,15 @@
       <div class="float-right">
         <button
           :class="saveButtonClass"
-          :disabled="!this.saveButtonEnabled"
+          :disabled="!saveButtonEnabled"
           @click="saveConfig"
-        >Save</button>
+        >
+          Save
+        </button>
       </div>
-      <h1 class="text-lg">{{ config.name }}</h1>
+      <h1 class="text-lg">
+        {{ config.name }}
+      </h1>
       <div class="clear-both" />
     </div>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
@@ -19,7 +23,7 @@
           type="text"
           :value="config.id"
           disabled
-        />
+        >
       </div>
       <div class="text-sm">
         <label>Device Name</label>
@@ -28,7 +32,7 @@
           type="text"
           :value="editedConfig.name || config.name"
           @change="changeName"
-        />
+        >
       </div>
       <div class="text-sm">
         <label>GPIO Pin</label>
@@ -37,7 +41,7 @@
           type="number"
           :value="editedConfig.pin || config.pin"
           @change="changePin"
-        />
+        >
       </div>
       <div class="text-sm">
         <label>Normal Condition</label>
@@ -45,7 +49,7 @@
           <ToggleSwitch
             class="inline"
             :enabled="(editedConfig.normal || config.normal) === 'on'"
-            @toggle="(enabled) => this.changeNormalCondition(enabled)"
+            @toggle="(enabled) => changeNormalCondition(enabled)"
           />
           <div class="inline ml-3 font-mono">
             {{ (editedConfig.normal || config.normal).toUpperCase() }}
@@ -59,7 +63,7 @@
 import ToggleSwitch from "./ToggleSwitch";
 export default {
   name: 'GpioConfig',
-  components: {ToggleSwitch},
+  components: { ToggleSwitch },
   props: {
     config: {
       required: true,

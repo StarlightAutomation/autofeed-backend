@@ -12,7 +12,9 @@
               :key="item.id"
               :to="item.href"
               class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-            >{{ item.text }}</nuxt-link>
+            >
+              {{ item.text }}
+            </nuxt-link>
           </div>
         </div>
 
@@ -26,14 +28,16 @@
         </div>
       </div>
     </div>
-    <div class="sm:hidden" id="mobile-menu" v-if="menuOpen">
+    <div v-if="menuOpen" id="mobile-menu" class="sm:hidden">
       <div class="pt-2 pb-3 space-y-1">
         <nuxt-link
           v-for="item in nav"
           :key="item.id"
           :to="item.href"
           class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-        >{{ item.text }}</nuxt-link>
+        >
+          {{ item.text }}
+        </nuxt-link>
       </div>
     </div>
   </nav>
@@ -61,7 +65,7 @@ export default {
           text: 'Home Assistant Configuration',
           icon: '',
           href: '/mqtt-config',
-        }
+        },
       ],
       menuOpen: false,
     };

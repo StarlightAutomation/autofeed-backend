@@ -1,6 +1,8 @@
 <template>
   <div class="w-full md:w-2/3 ml-auto mr-auto md:px-0 px-3">
-    <h1 class="text-2xl mt-5 border-b pb-2 mb-3">Home Assistant Configuration</h1>
+    <h1 class="text-2xl mt-5 border-b pb-2 mb-3">
+      Home Assistant Configuration
+    </h1>
     <div class="text-lg inline">
       Enabled:
       <ToggleSwitch
@@ -9,20 +11,20 @@
         @toggle="toggleEnabled"
       />
     </div>
-    <div class="mt-3 border border-dashed border-blue-500 rounded p-3" v-if="enabled">
+    <div v-if="enabled" class="mt-3 border border-dashed border-blue-500 rounded p-3">
       <div class="mb-3">
         <div class="mb-1">
           MQTT URL:
           <span class="rounded bg-red-500 border border-red-700 text-red-900 text-xs uppercase px-0.5">required</span>
         </div>
-        <input type="text" class="text-input font-mono" v-model="editedConfig.host" placeholder="mqtt://192.168.1.1:1883" />
+        <input v-model="editedConfig.host" type="text" class="text-input font-mono" placeholder="mqtt://192.168.1.1:1883">
       </div>
       <div class="mb-3">
         <div class="mb-1">
           Node Prefix:
           <span class="rounded bg-red-500 border border-red-700 text-red-900 text-xs uppercase px-0.5">required</span>
         </div>
-        <input type="text" class="text-input font-mono" v-model="editedConfig.nodePrefix" placeholder="autofeed_1" />
+        <input v-model="editedConfig.nodePrefix" type="text" class="text-input font-mono" placeholder="autofeed_1">
         <div class="rounded border border-blue-500 bg-blue-300 shadow p-2 text-blue-800 mt-1">
           <font-awesome-icon :icon="['fas', 'info']" class="mr-3 w-4 h-4 inline" />
           This should be a unique identifier for this AutoFeed device. For example,
@@ -33,12 +35,16 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-3">
-          <div class="mb-1">Username:</div>
-          <input type="text" class="text-input font-mono" v-model="editedConfig.username" placeholder="HomeAssistantUser" />
+          <div class="mb-1">
+            Username:
+          </div>
+          <input v-model="editedConfig.username" type="text" class="text-input font-mono" placeholder="HomeAssistantUser">
         </div>
         <div class="mb-3">
-          <div class="mb-1">Password:</div>
-          <input type="password" class="text-input font-mono" v-model="editedConfig.password" placeholder="HomeAssistantPassword" />
+          <div class="mb-1">
+            Password:
+          </div>
+          <input v-model="editedConfig.password" type="password" class="text-input font-mono" placeholder="HomeAssistantPassword">
         </div>
       </div>
 
@@ -58,7 +64,7 @@
 import ToggleSwitch from "../components/ToggleSwitch";
 export default {
   name: 'MqttConfigPage',
-  components: {ToggleSwitch},
+  components: { ToggleSwitch },
   data () {
     return {
       enabled: false,
@@ -75,7 +81,7 @@ export default {
         'rounded',
         'w-full',
         'border',
-        'p-2'
+        'p-2',
       ];
 
       if (this.buttonDisabled) {
@@ -98,7 +104,7 @@ export default {
       return style.join(' ');
     },
     buttonDisabled () {
-      return !!!this.editedConfig.host || !!!this.editedConfig.nodePrefix === undefined;
+      return !this.editedConfig.host || !this.editedConfig.nodePrefix === undefined;
     },
   },
   methods: {
@@ -118,6 +124,6 @@ export default {
     if (this.mqttConfig !== undefined) {
       this.editedConfig = { ...this.mqttConfig };
     }
-  }
+  },
 };
 </script>

@@ -6,13 +6,13 @@ export default {
   head: {
     title: 'DIYAutoFeed',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'en',
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
     ],
     link: [
     ],
@@ -47,21 +47,21 @@ export default {
     ['@nuxtjs/dotenv', { systemvars: true }],
     [
       'nuxt-fontawesome', {
-      imports: [
-        {
-          set: '@fortawesome/free-solid-svg-icons',
-          icons: ['fas'],
-        },
-        {
-          set: '@fortawesome/free-brands-svg-icons',
-          icons: ['fab'],
-        },
-        {
-          set: '@fortawesome/free-regular-svg-icons',
-          icons: ['far'],
-        },
-      ],
-    },
+        imports: [
+          {
+            set: '@fortawesome/free-solid-svg-icons',
+            icons: ['fas'],
+          },
+          {
+            set: '@fortawesome/free-brands-svg-icons',
+            icons: ['fab'],
+          },
+          {
+            set: '@fortawesome/free-regular-svg-icons',
+            icons: ['far'],
+          },
+        ],
+      },
     ],
   ],
 
@@ -88,4 +88,4 @@ export default {
   purgeCSS: {
     whitelistPatterns: [/(^|\.)fa-/, /-fa($|\.)/],
   },
-}
+};
