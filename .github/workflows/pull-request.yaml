@@ -1,4 +1,4 @@
-name: Run Tests
+name: Run Tests and Lint
 on:
   push:
     branches:
@@ -7,6 +7,7 @@ on:
 
 jobs:
   test:
+    name: Test Server
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -35,3 +36,65 @@ jobs:
         run: cd server && yarn
       - name: Run Tests
         run: cd server && yarn test
+
+  lint-server:
+    name: Lint Server
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node: [ 16 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Setup node env
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache node_modules
+        uses: actions/cache@v2.1.4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: cd server && yarn
+      - name: Lint
+        run: cd server && yarn lint
+
+  lint-client:
+    name: Lint Client
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        node: [ 16 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Setup node env
+        uses: actions/setup-node@v2.1.5
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - name: Cache node_modules
+        uses: actions/cache@v2.1.4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: cd client && yarn
+      - name: Lint
+        run: cd client && yarn lint
