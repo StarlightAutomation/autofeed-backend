@@ -1,9 +1,9 @@
-import AbstractController from "../http/AbstractController";
-import {Application, Request, Response} from "express";
-import * as express from 'express';
+import AbstractController from "@http/AbstractController";
+import {Application, Express, Request, Response} from "express";
 import ModelNotFound from "@app/exceptions/ModelNotFound";
 import util from "util";
-const server = require('express');
+import {wsExpress, listen} from "wsexpress";
+const express = require('express');
 
 export default class HttpService
 {
@@ -12,14 +12,14 @@ export default class HttpService
     protected controllers: Array<(express: Application) => AbstractController> = [];
     protected port: number;
 
-    protected app: Application;
+    protected app: Express;
 
     constructor(port: number, controllers: Array<(express: Application) => AbstractController>)
     {
         this.port = port;
         this.controllers = controllers;
 
-        this.app = server();
+        this.app = express();
         this.app.use(express.json());
     }
 
@@ -35,12 +35,18 @@ export default class HttpService
             next();
         });
 
+        const controllers: Array<AbstractController> = [];
         for (const i in this.controllers) {
             const controller = this.controllers[i](this.app);
-
-            controller.middleware();
-            controller.boot();
+            controllers.push(controller);
         }
+
+        this.bootControllerRoutes(controllers);
+
+        // wsexpress
+        this.app.use(wsExpress({ app: this.app }));
+
+        this.bootControllerMiddleware(controllers);
 
         this.app.use((err: any, req: Request, res: Response, next: any) => {
             switch (true) {
@@ -70,6 +76,18 @@ export default class HttpService
 
     public start (): void
     {
-        this.app.listen(this.port);
+        listen({ app: this.app }, this.port, () => {
+            console.log('listening');
+        });
+    }
+
+    protected bootControllerRoutes (controllers: Array<AbstractController>): void
+    {
+        controllers.map((controller: AbstractController) => controller.boot());
+    }
+
+    protected bootControllerMiddleware (controllers: Array<AbstractController>): void
+    {
+        controllers.map((controller: AbstractController) => controller.middleware());
     }
 }
