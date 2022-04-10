@@ -4,6 +4,7 @@ import * as express from 'express';
 import ModelNotFound from "@app/exceptions/ModelNotFound";
 import util from "util";
 const server = require('express');
+const cors = require("cors");
 
 export default class HttpService
 {
@@ -21,6 +22,10 @@ export default class HttpService
 
         this.app = server();
         this.app.use(express.json());
+        this.app.use(cors({
+            origin: '*',
+            optionsSuccessStatus: 200,
+        }));
     }
 
     public getExpress (): Application
