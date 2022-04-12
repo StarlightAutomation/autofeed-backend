@@ -9,6 +9,7 @@ export interface IMqttConfig
     haDiscoveryPrefix?: string;
     username?: string;
     password?: string;
+    refreshInterval?: number;
 }
 
 export interface IGPIOConfig
@@ -31,6 +32,7 @@ export interface IConfig
     };
 
     schedules: Array<ISchedule>;
+    scheduleInterval?: number;
     mqtt?: IMqttConfig;
 }
 

@@ -1,4 +1,4 @@
-import {GPIO_CALLER, GPIO_STATE, IGPIOAction} from "@services/gpio";
+import {GPIO_CALLER, GPIO_STATE, IGPIOAction, IGPIOState} from "@services/gpio";
 import MessageBus from "@services/messaging/bus";
 const md5 = require("md5");
 
@@ -22,6 +22,27 @@ export default class Message
     public get action (): IGPIOAction
     {
         return this.gpioAction;
+    }
+
+    public get state (): IGPIOState
+    {
+        return {
+            gpioId: this.gpioAction.gpioId,
+            actionId: this.gpioAction.actionId,
+            state: this.gpioAction.action,
+            timestamp: this.gpioAction.calledAt,
+            caller: this.gpioAction.caller,
+        };
+    }
+
+    public dispatchGpioAction (): void
+    {
+        MessageBus.dispatchGpioAction(this.action);
+    }
+
+    public static generate (gpioId: string, action: GPIO_STATE, caller: GPIO_CALLER, payload?: any): Message
+    {
+        return new Message(gpioId, action, caller, new Date(), payload);
     }
 
     public static dispatchScheduledAction (gpioId: string, action: GPIO_STATE, payload?: any): void

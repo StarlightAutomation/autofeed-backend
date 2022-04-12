@@ -56,6 +56,7 @@ describe ('test gpio service', () => {
 
     test ('test pushState', () => {
         const state: IGPIOState = {
+            gpioId: 'TEST_GPIO',
             actionId: 'test-action-id',
             state: 'on',
             caller: 'system',
@@ -63,10 +64,10 @@ describe ('test gpio service', () => {
         };
         const anotherState: IGPIOState = { ...state, actionId: 'test-action-id2', caller: 'schedule' };
 
-        GPIO.pushState('TEST_GPIO', state);
+        GPIO.pushState(state);
 
-        const hasFirstState = GPIO.hasState('TEST_GPIO', state);
-        const hasSecondState = GPIO.hasState('TEST_GPIO', anotherState);
+        const hasFirstState = GPIO.hasState(state);
+        const hasSecondState = GPIO.hasState(anotherState);
 
         expect(hasFirstState).toBe(true);
         expect(hasSecondState).toBe(false);
@@ -74,25 +75,26 @@ describe ('test gpio service', () => {
 
     test ('test hasState', () => {
         const state1: IGPIOState = {
+            gpioId: 'TEST_GPIO1',
             actionId: 'test-action-id',
             state: 'on',
             caller: 'system',
             timestamp: new Date(),
         };
 
-        const state2: IGPIOState = { ...state1, actionId: 'test-action-id2', caller: 'schedule' };
-        const state3: IGPIOState = { ...state1, actionId: 'test-action-id3', caller: 'user' };
+        const state2: IGPIOState = { ...state1, gpioId: 'TEST_GPIO2', actionId: 'test-action-id2', caller: 'schedule' };
+        const state3: IGPIOState = { ...state1, gpioId: 'TEST_GPIO1', actionId: 'test-action-id3', caller: 'user' };
 
-        GPIO.pushState('TEST_GPIO1', state1);
-        GPIO.pushState('TEST_GPIO2', state2);
-        GPIO.pushState('TEST_GPIO1', state3);
+        GPIO.pushState(state1);
+        GPIO.pushState(state2);
+        GPIO.pushState(state3);
 
-        const hasState1ForGpio1 = GPIO.hasState('TEST_GPIO1', state1);
-        const hasState1ForGpio2 = GPIO.hasState('TEST_GPIO2', state1);
-        const hasState2ForGpio1 = GPIO.hasState('TEST_GPIO1', state2);
-        const hasState2ForGpio2 = GPIO.hasState('TEST_GPIO2', state2);
-        const hasState3ForGpio1 = GPIO.hasState('TEST_GPIO1', state3);
-        const hasState3ForGpio2 = GPIO.hasState('TEST_GPIO2', state3);
+        const hasState1ForGpio1 = GPIO.hasState(state1);
+        const hasState1ForGpio2 = GPIO.hasState({ ...state1, gpioId: 'TEST_GPIO2' });
+        const hasState2ForGpio1 = GPIO.hasState({ ...state2, gpioId: 'TEST_GPIO1' });
+        const hasState2ForGpio2 = GPIO.hasState(state2);
+        const hasState3ForGpio1 = GPIO.hasState(state3);
+        const hasState3ForGpio2 = GPIO.hasState({ ...state3, gpioId: 'TEST_GPIO2' });
 
         expect(hasState1ForGpio1).toBe(true);
         expect(hasState1ForGpio2).toBe(false);
@@ -105,6 +107,7 @@ describe ('test gpio service', () => {
     test ('test executeState', async () => {
         const gpioId = 'TEST_GPIO';
         const state1: IGPIOState = {
+            gpioId,
             actionId: 'test-action-id',
             state: 'on',
             caller: 'user',
@@ -116,8 +119,8 @@ describe ('test gpio service', () => {
         const callGpioHL = jest.fn();
         ScriptCaller.callGpioHL = callGpioHL;
 
-        await GPIO.executeState(gpioId, state1);
-        await GPIO.executeState(gpioId, state2);
+        await GPIO.executeState(state1);
+        await GPIO.executeState(state2);
 
         expect(callGpioHL).toHaveBeenCalledTimes(2);
         expect(callGpioHL).toHaveBeenCalledWith('TEST_GPIO', true);
@@ -127,6 +130,7 @@ describe ('test gpio service', () => {
     test ('test stateWasOverridden', () => {
         const gpioId = 'TEST_GPIO';
         const state1: IGPIOState = {
+            gpioId,
             actionId: 'test-action-id',
             state: 'on',
             caller: 'schedule',
@@ -134,6 +138,7 @@ describe ('test gpio service', () => {
         };
 
         const state2: IGPIOState = {
+            gpioId,
             actionId: 'test-action-id2',
             state: 'on',
             caller: 'system',
@@ -141,25 +146,26 @@ describe ('test gpio service', () => {
         };
 
         const state3: IGPIOState = {
+            gpioId,
             actionId: 'test-action-id3',
             state: 'off',
             caller: 'user',
             timestamp: new Date(),
         };
 
-        GPIO.pushState(gpioId, state1);
+        GPIO.pushState(state1);
 
-        expect(GPIO.stateWasOverridden(gpioId, state1)).toBe(false);
+        expect(GPIO.stateWasOverridden(state1)).toBe(false);
 
-        GPIO.pushState(gpioId, state2);
+        GPIO.pushState(state2);
 
-        expect(GPIO.stateWasOverridden(gpioId, state1)).toBe(false);
-        expect(GPIO.stateWasOverridden(gpioId, state2)).toBe(false);
+        expect(GPIO.stateWasOverridden(state1)).toBe(false);
+        expect(GPIO.stateWasOverridden(state2)).toBe(false);
 
         // Once a user initiated action is pushed, old states are overridden
-        GPIO.pushState(gpioId, state3);
+        GPIO.pushState(state3);
 
-        expect(GPIO.stateWasOverridden(gpioId, state1)).toBe(true);
-        expect(GPIO.stateWasOverridden(gpioId, state2)).toBe(true);
+        expect(GPIO.stateWasOverridden(state1)).toBe(true);
+        expect(GPIO.stateWasOverridden(state2)).toBe(true);
     });
 });

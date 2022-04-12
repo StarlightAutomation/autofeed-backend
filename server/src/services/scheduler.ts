@@ -17,7 +17,6 @@ export interface ISchedule
     id: string;
     day: string;
     enabled: boolean;
-    copy?: string;
     start: string;
     end: string;
     states: Array<IScheduleState>;
@@ -57,10 +56,10 @@ export default class Scheduler extends EventEmitter
         let schedule = Config.instance.getScheduleById(currentDay);
         if (!schedule || !schedule.enabled) return;
 
-        if (schedule.copy !== undefined) {
-            schedule = Config.instance.getScheduleById(schedule.copy);
-            if (!schedule || !schedule.enabled) return;
-        }
+        // if (schedule.copy !== undefined) {
+        //     schedule = Config.instance.getScheduleById(schedule.copy);
+        //     if (!schedule || !schedule.enabled) return;
+        // }
 
         const timeFormat = 'HH:mm:ss';
         const currentTime = moment(moment().format(timeFormat), timeFormat);

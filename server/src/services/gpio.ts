@@ -15,6 +15,7 @@ export interface IGPIOAction
 
 export interface IGPIOState
 {
+    gpioId: string;
     actionId: string;
     timestamp: Date;
     caller: GPIO_CALLER;
@@ -25,35 +26,35 @@ export default class GPIO
 {
     protected static states: { [gpioId: string]: Array<IGPIOState> } = {};
 
-    public static pushState (gpioId: string, state: IGPIOState): void
+    public static pushState (state: IGPIOState): void
     {
-        if (!this.states[gpioId]) {
-            this.states[gpioId] = [];
+        if (!this.states[state.gpioId]) {
+            this.states[state.gpioId] = [];
         }
 
-        this.states[gpioId].push(state);
+        this.states[state.gpioId].push(state);
     }
 
-    public static hasState (gpioId: string, state: IGPIOState): boolean
+    public static hasState (state: IGPIOState): boolean
     {
-        if (!this.states[gpioId]) return false;
+        if (!this.states[state.gpioId]) return false;
 
-        return this.states[gpioId].filter((s: IGPIOState) => s.actionId === state.actionId).length > 0;
+        return this.states[state.gpioId].filter((s: IGPIOState) => s.actionId === state.actionId).length > 0;
     }
 
-    public static stateWasOverridden (gpioId: string, state: IGPIOState): boolean
+    public static stateWasOverridden (state: IGPIOState): boolean
     {
-        if (!this.states[gpioId]) return false;
+        if (!this.states[state.gpioId]) return false;
 
-        const index = this.states[gpioId].indexOf(state);
-        const statesAfter = this.states[gpioId].slice(index);
+        const index = this.states[state.gpioId].indexOf(state);
+        const statesAfter = this.states[state.gpioId].slice(index);
 
         return statesAfter.filter((s: IGPIOState) => s.caller === 'user').length > 0;
     }
 
-    public static async executeState (gpioId: string, state: IGPIOState): Promise<void>
+    public static async executeState (state: IGPIOState): Promise<void>
     {
-        await ScriptCaller.callGpioHL(gpioId, state.state === 'on');
+        await ScriptCaller.callGpioHL(state.gpioId, state.state === 'on');
     }
 
     public static async call (gpioId: string, setting: boolean): Promise<void>
