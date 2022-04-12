@@ -1,4 +1,4 @@
-import {ISchedule} from "@services/scheduler";
+import {ISchedule} from "@services/scheduling/scheduler";
 import util from "util";
 const fs = require("fs");
 

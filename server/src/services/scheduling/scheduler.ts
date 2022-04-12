@@ -1,10 +1,26 @@
 import Config from "@services/config";
 import moment from "moment";
-import {IScheduleState} from "@services/scheduler";
 import GPIO from "@services/gpio";
 import Message from "@services/messaging/message";
 import Log from "@services/scheduling/log";
 import MqttClient from "@services/mqtt/client";
+const debug = require("debug")("autofeed-scheduler");
+
+export interface IScheduleState
+{
+    id: string;
+    state: 'on'|'off';
+}
+
+export interface ISchedule
+{
+    id: string;
+    day: string;
+    enabled: boolean;
+    start: string;
+    end: string;
+    states: Array<IScheduleState>;
+}
 
 export default class Scheduler
 {
@@ -13,16 +29,14 @@ export default class Scheduler
     protected scheduleInterval?: NodeJS.Timer;
     protected mqttInterval?: NodeJS.Timer;
 
-    protected constructor ()
-    {
-    }
-
     public static initialize (): Scheduler
     {
         if (!this.instance) {
             this.instance = new Scheduler();
+            debug('created scheduler instance');
         }
 
+        debug('scheduler initialized');
         return this.instance;
     }
 
@@ -30,6 +44,7 @@ export default class Scheduler
     {
         if (!this.instance) throw new Error('Scheduler not initialized');
         this.instance.start();
+        debug('scheduler started');
     }
 
     protected start (): void
@@ -49,8 +64,11 @@ export default class Scheduler
         const scheduleInterval = Config.instance.getConfig().scheduleInterval || 1000;
         const mqttInterval = Config.instance.getConfig().mqtt?.refreshInterval || 60000;
 
+        debug('setting schedule interval with %dms', scheduleInterval);
+
         this.scheduleInterval = setInterval(() => this.runSchedule(), scheduleInterval);
         if (Config.instance.getConfig().mqtt) {
+            debug('setting mqtt interval with %dms', mqttInterval);
             this.mqttInterval = setInterval(() => this.updateMqttStates(), mqttInterval);
         }
     }
@@ -62,16 +80,19 @@ export default class Scheduler
                 MqttClient.publishGpioState(gpio.id, (on) ? 'on' : 'off');
             });
         }
+        debug('updated mqtt states');
     }
 
     protected runSchedule (): void
     {
         const currentDay = moment().format('dddd').toLowerCase();
-        let schedule = Config.instance.getScheduleById(currentDay);
+        const schedule = Config.instance.getScheduleById(currentDay);
         if (!schedule || !schedule.enabled) return;
 
         const timeFormat = 'HH:mm:ss';
         const currentTime = moment(moment().format(timeFormat), timeFormat);
+
+        debug('running schedule for %s %s', currentDay, currentTime);
 
         const beforeTime = moment(schedule.start, timeFormat);
         const endTime = moment(schedule.end, timeFormat);
@@ -104,6 +125,8 @@ export default class Scheduler
             const status = state.state;
             const statusAsBool = status === 'on';
 
+            debug('in schedule - gpio %s desired state \'%s\'', gpio.id, status);
+
             // Check if current state is already desired state
             const currentStatus = await GPIO.getStatus(gpio.id);
             if (currentStatus === statusAsBool) return;
@@ -117,6 +140,7 @@ export default class Scheduler
              * If the state log does not yet have this state, dispatch it
              */
             if (!Log.stateExists(message.state)) {
+                debug('setting %s state to %s', gpio.id, status);
                 this.dispatchStateMessage(message);
             }
         });
@@ -134,11 +158,13 @@ export default class Scheduler
             const revertedStatusAsBool = !statusAsBool;
             const revertedStatus = revertedStatusAsBool ? 'on' : 'off';
 
+            debug('outside schedule - gpio %s desired state %s', gpio.id, revertedStatus);
+
             // Check if states were already reverted
             const currentStatus = await GPIO.getStatus(gpio.id);
             if (currentStatus === revertedStatusAsBool) return;
 
-            console.log({scheduleStart, scheduleEnd});
+            debug('unexpected state for %s (%s, expected %s)', gpio.id, currentStatus ? 'on' : 'off', revertedStatus);
 
             const scheduleMessage = Message.generate(gpio.id, status, 'schedule', { scheduleStart, scheduleEnd });
             const revertMessage = Message.generate(gpio.id, revertedStatus, 'schedule', { scheduleStart, scheduleEnd });
@@ -147,11 +173,14 @@ export default class Scheduler
             const scheduleWasReverted = Log.stateExists(revertMessage.state);
 
             if (!scheduleWasRun) {
+                debug('schedule was not run for %s, dispatching now', gpio.id);
+                console.log(Log.getLogs());
                 this.dispatchStateMessage(scheduleMessage);
                 return;
             }
 
             if (!scheduleWasReverted) {
+                debug('schedule was never reverted for %s, dispatching now', gpio.id);
                 this.dispatchStateMessage(revertMessage);
             }
         });

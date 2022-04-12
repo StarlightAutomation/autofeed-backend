@@ -21,6 +21,11 @@ export default class Log
 
     public static stateExists (state: IGPIOState): boolean
     {
-        return this.stateLog.indexOf(state) !== -1;
+        return this.stateLog.filter((s: IGPIOState) => {
+            return s.gpioId === state.gpioId &&
+                s.actionId === state.actionId &&
+                s.state === state.state &&
+                s.caller === state.caller;
+        }).length > 0;
     }
 }
