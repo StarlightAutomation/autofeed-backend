@@ -57,7 +57,7 @@ export default {
       ];
 
       if (this.enabled) {
-        style.push('bg-indigo-600', 'dark:bg-gray-800');
+        style.push('bg-indigo-600', 'dark:bg-blue-700');
       } else {
         style.push('bg-gray-200', 'dark:bg-gray-500');
       }

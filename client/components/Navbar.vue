@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white shadow">
+  <nav class="bg-white dark:bg-cool-gray-800 shadow">
     <div class="w-full md:w-2/3 ml-auto mr-auto md:px-0 px-3">
       <div class="flex justify-between h-16">
         <div class="flex">
@@ -11,20 +11,29 @@
               v-for="item in nav"
               :key="item.id"
               :to="item.href"
-              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-200 dark:hover:text-gray-400 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
             >
               {{ item.text }}
             </nuxt-link>
           </div>
         </div>
 
-        <div class="-mr-2 flex items-center sm:hidden">
-          <button
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
-            @click="menuOpen = !menuOpen"
-          >
-            <font-awesome-icon :icon="['fas', 'bars']" class="w-4 h-4" />
-          </button>
+        <div class="flex">
+          <div class="inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <font-awesome-icon
+              :icon="lightingIcon"
+              :class="lightingIconStyle"
+              @click="toggleLightingMode()"
+            />
+          </div>
+          <div class="-mr-2 flex items-center sm:hidden">
+            <button
+              class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              @click="menuOpen = !menuOpen"
+            >
+              <font-awesome-icon :icon="['fas', 'bars']" class="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -45,6 +54,7 @@
 <script>
 export default {
   name: 'Navbar',
+  props: ['lightingMode'],
   data () {
     return {
       nav: [
@@ -69,6 +79,41 @@ export default {
       ],
       menuOpen: false,
     };
+  },
+  computed: {
+    lightingIcon () {
+      let icon = ['fas'];
+      if (this.lightingMode === 'dark') {
+        icon.push('sun');
+      } else {
+        icon.push('moon');
+      }
+      return icon;
+    },
+    lightingIconStyle () {
+      let style = [
+        'cursor-pointer',
+        'hover:text-gray-400',
+        'dark:hover:text-gray-500',
+        'text-gray-400',
+        'hover:text-gray-300',
+        'md:mr-0',
+        'mr-3',
+        'w-4',
+        'h-4',
+      ];
+      return style.join(' ');
+    },
+  },
+  methods: {
+    toggleSidebar () {
+      this.$refs.sidebarToggle.blur();
+      this.$emit('toggleSidebar');
+    },
+    toggleLightingMode () {
+      let newMode = this.lightingMode === 'dark' ? 'light' : 'dark';
+      this.$emit('lightingMode', newMode);
+    },
   },
 };
 </script>

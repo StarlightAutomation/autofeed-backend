@@ -11,7 +11,10 @@
       </div>
     </div>
     <div v-else :class="bodyClass">
-      <Navbar />
+      <Navbar
+        :lighting-mode="lightingMode"
+        @lightingMode="toggleLightingMode"
+      />
       <Nuxt />
     </div>
   </div>
@@ -26,7 +29,7 @@ export default {
     return {
       loading: true,
       sidebarOpen: false,
-      lightingMode: 'dark',
+      lightingMode: 'light',
     };
   },
 
@@ -45,13 +48,13 @@ export default {
         'md:antialiased',
         'dark:bg-cool-gray-900',
         'dark:text-gray-100',
-        'w-full',
+        'min-h-screen',
       ];
 
       return style.join(' ');
     },
     mainClass () {
-      return 'light';
+      return this.lightingMode;
     },
   },
 
