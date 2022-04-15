@@ -36,6 +36,9 @@ jobs:
         with:
           images: ghcr.io/starlightautomation/autofeed-server
 
+      - name: Apply version to package.json
+        run: cd server && npm version from-git --allow-same-version
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         env:
@@ -76,6 +79,9 @@ jobs:
         uses: docker/metadata-action@v2
         with:
           images: ghcr.io/starlightautomation/autofeed-client
+
+      - name: Apply version to package.json
+        run: cd client && npm version from-git --allow-same-version
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2

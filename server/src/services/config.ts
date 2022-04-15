@@ -1,4 +1,4 @@
-import {ISchedule} from "@services/scheduler";
+import {ISchedule} from "@services/scheduling/scheduler";
 import util from "util";
 const fs = require("fs");
 
@@ -9,6 +9,7 @@ export interface IMqttConfig
     haDiscoveryPrefix?: string;
     username?: string;
     password?: string;
+    refreshInterval?: number;
 }
 
 export interface IGPIOConfig
@@ -31,6 +32,7 @@ export interface IConfig
     };
 
     schedules: Array<ISchedule>;
+    scheduleInterval?: number;
     mqtt?: IMqttConfig;
 }
 

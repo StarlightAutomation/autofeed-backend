@@ -5,6 +5,7 @@ export default class MessageBus
     public static dispatchGpioAction (action: IGPIOAction): void
     {
         const gpioState: IGPIOState = {
+            gpioId: action.gpioId,
             actionId: action.actionId,
             state: action.action,
             timestamp: action.calledAt,
@@ -15,15 +16,15 @@ export default class MessageBus
          * If this is a user action, always execute
          */
         if (action.caller === 'user') {
-            this.executeState(action.gpioId, gpioState);
+            this.executeState(gpioState);
             return;
         }
 
         /**
          * If the state is "new" - aka not yet dispatched - execute it
          */
-        if (!GPIO.hasState(action.gpioId, gpioState)) {
-            this.executeState(action.gpioId, gpioState);
+        if (!GPIO.hasState(gpioState)) {
+            this.executeState(gpioState);
             return;
         }
 
@@ -31,16 +32,16 @@ export default class MessageBus
          * The state has been executed before, but may need to be executed again.
          * If the state was _not_ overridden, execute it again.
          */
-        if (!GPIO.stateWasOverridden(action.gpioId, gpioState)) {
-            this.executeState(action.gpioId, gpioState);
+        if (!GPIO.stateWasOverridden(gpioState)) {
+            this.executeState(gpioState);
             return;
         }
     }
 
-    protected static executeState (gpioId: string, state: IGPIOState): void
+    protected static executeState (state: IGPIOState): void
     {
-        GPIO.executeState(gpioId, state).then(() => {
-            GPIO.pushState(gpioId, state);
+        GPIO.executeState(state).then(() => {
+            GPIO.pushState(state);
         }).catch((error) => {
             console.error(error);
         });

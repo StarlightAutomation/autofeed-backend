@@ -19,6 +19,7 @@ describe ('test MessageBus', () => {
         };
 
         const expectedState: IGPIOState = {
+            gpioId,
             actionId: action.actionId,
             state: action.action,
             timestamp: action.calledAt,
@@ -26,15 +27,15 @@ describe ('test MessageBus', () => {
         };
 
         // @ts-ignore
-        when(GPIO.executeState).calledWith(gpioId, expectedState).mockResolvedValue({});
+        when(GPIO.executeState).calledWith(expectedState).mockResolvedValue({});
 
         MessageBus.dispatchGpioAction(action);
         await Promise.resolve();
 
         expect(GPIO.executeState).toHaveBeenCalledTimes(1);
-        expect(GPIO.executeState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.executeState).toHaveBeenCalledWith(expectedState);
         expect(GPIO.pushState).toHaveBeenCalledTimes(1);
-        expect(GPIO.pushState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.pushState).toHaveBeenCalledWith(expectedState);
     });
 
     test ('test dispatchGpioAction executes when caller is `schedule` and hasState is false', async () => {
@@ -48,24 +49,25 @@ describe ('test MessageBus', () => {
         };
 
         const expectedState: IGPIOState = {
+            gpioId,
             actionId: action.actionId,
             state: action.action,
             timestamp: action.calledAt,
             caller: action.caller,
         };
 
-        when(GPIO.hasState).calledWith(gpioId, expectedState).mockReturnValue(false);
+        when(GPIO.hasState).calledWith(expectedState).mockReturnValue(false);
 
         // @ts-ignore
-        when(GPIO.executeState).calledWith(gpioId, expectedState).mockResolvedValue({});
+        when(GPIO.executeState).calledWith(expectedState).mockResolvedValue({});
 
         MessageBus.dispatchGpioAction(action);
         await Promise.resolve();
 
         expect(GPIO.executeState).toHaveBeenCalledTimes(1);
-        expect(GPIO.executeState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.executeState).toHaveBeenCalledWith(expectedState);
         expect(GPIO.pushState).toHaveBeenCalledTimes(1);
-        expect(GPIO.pushState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.pushState).toHaveBeenCalledWith(expectedState);
     });
 
     test ('test dispatchGpioAction executes when caller is `schedule` and hasState is true and stateWasOverridden is false', async () => {
@@ -79,25 +81,26 @@ describe ('test MessageBus', () => {
         };
 
         const expectedState: IGPIOState = {
+            gpioId,
             actionId: action.actionId,
             state: action.action,
             timestamp: action.calledAt,
             caller: action.caller,
         };
 
-        when(GPIO.hasState).calledWith(gpioId, expectedState).mockReturnValue(true);
-        when(GPIO.stateWasOverridden).calledWith(gpioId, expectedState).mockReturnValue(false);
+        when(GPIO.hasState).calledWith(expectedState).mockReturnValue(true);
+        when(GPIO.stateWasOverridden).calledWith(expectedState).mockReturnValue(false);
 
         // @ts-ignore
-        when(GPIO.executeState).calledWith(gpioId, expectedState).mockResolvedValue({});
+        when(GPIO.executeState).calledWith(expectedState).mockResolvedValue({});
 
         MessageBus.dispatchGpioAction(action);
         await Promise.resolve();
 
         expect(GPIO.executeState).toHaveBeenCalledTimes(1);
-        expect(GPIO.executeState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.executeState).toHaveBeenCalledWith(expectedState);
         expect(GPIO.pushState).toHaveBeenCalledTimes(1);
-        expect(GPIO.pushState).toHaveBeenCalledWith(gpioId, expectedState);
+        expect(GPIO.pushState).toHaveBeenCalledWith(expectedState);
     });
 
     test ('test dispatchGpioAction does not execute when caller is `schedule` and hasState is true and stateWasOverridden is true', async () => {
@@ -111,14 +114,15 @@ describe ('test MessageBus', () => {
         };
 
         const expectedState: IGPIOState = {
+            gpioId,
             actionId: action.actionId,
             state: action.action,
             timestamp: action.calledAt,
             caller: action.caller,
         };
 
-        when(GPIO.hasState).calledWith(gpioId, expectedState).mockReturnValue(true);
-        when(GPIO.stateWasOverridden).calledWith(gpioId, expectedState).mockReturnValue(true);
+        when(GPIO.hasState).calledWith(expectedState).mockReturnValue(true);
+        when(GPIO.stateWasOverridden).calledWith(expectedState).mockReturnValue(true);
 
         MessageBus.dispatchGpioAction(action);
         await Promise.resolve();
